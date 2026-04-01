@@ -1,0 +1,191 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║           VERSION MANAGEMENT AGENT - QUICK REFERENCE                     ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ 1️⃣  BUMP VERSION (Create new release)                                    │
+└──────────────────────────────────────────────────────────────────────────┘
+
+  /manage-release bump-version --version 1.2.0 --type minor --title "Title"
+  
+  Agent will:
+  ✓ Validate version format (X.Y.Z)
+  ✓ Check git status (must be clean)
+  ✓ Ask for: Added / Fixed / Changed / Removed
+  ✓ Create: version/v1.2.0.md
+  ✓ Update: package.json
+  ✓ Commit: "chore: release v1.2.0"
+  ✓ Tag: v1.2.0
+  
+  Output:
+  ✓ Version bumped to 1.2.0
+  ✓ Git commit & tag created
+  
+  Next: /manage-release push-release --version 1.2.0
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ 2️⃣  ADD TO CHANGELOG (Quick updates)                                     │
+└──────────────────────────────────────────────────────────────────────────┘
+
+  /manage-release add-changelog --section Added --entry "New feature"
+  /manage-release add-changelog --section Fixed --entry "Bug fix"
+  
+  Sections: Added | Fixed | Changed | Removed
+  
+  Agent will:
+  ✓ Find latest version file
+  ✓ Add entry to section
+  ✓ Update file
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ 3️⃣  PUSH & RELEASE (Go live)                                             │
+└──────────────────────────────────────────────────────────────────────────┘
+
+  /manage-release push-release --version 1.2.0 --create-github-release
+  
+  Agent will:
+  ✓ git push origin main
+  ✓ git push origin v1.2.0  (tag)
+  ✓ Create GitHub release
+  ✓ Show release URL
+  
+  Output:
+  ✓ Release URL: https://github.com/.../releases/tag/v1.2.0
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ 4️⃣  LIST VERSIONS                                                        │
+└──────────────────────────────────────────────────────────────────────────┘
+
+  /manage-release list-versions
+  
+  Output:
+  📦 Available Versions:
+    v1.1.0 - Planning (Polish & UX)
+    v1.0.0 - Initial Release
+  
+  Current version in package.json: 0.0.0
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ 5️⃣  GENERATE MASTER CHANGELOG                                             │
+└──────────────────────────────────────────────────────────────────────────┘
+
+  /manage-release generate-summary --output CHANGELOG.md
+  
+  Creates: CHANGELOG.md with all versions merged
+
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                         TYPICAL WORKFLOW                                 ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+  Step 1: Create Release
+  ├─ /manage-release bump-version --version 1.2.0 --type minor
+  └─ ✓ Changelog created, git commit & tag ready
+  
+  Step 2: Review (optional)
+  └─ Check version/v1.2.0.md if it looks good
+  
+  Step 3: Push to GitHub
+  ├─ /manage-release push-release --version 1.2.0 --create-github-release
+  └─ ✓ Release live on GitHub!
+
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                        VALIDATION CHECKS                                 ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+  Before bump-version:
+  ✓ Git status must be CLEAN (no uncommitted changes)
+  ✓ Version format must be X.Y.Z (e.g., 1.2.0)
+  
+  Before push-release:
+  ✓ Version file must exist (version/vX.Y.Z.md)
+  ✓ Git tag must exist locally (vX.Y.Z)
+  
+  Before GitHub operations:
+  ✓ gh CLI must be installed
+  ✓ gh auth login must be done
+
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                       FILE LOCATIONS                                     ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+  📁 .planning/
+  ├── README.md                              ← START HERE
+  ├── VERSION_AGENT_SYSTEM_PROMPT.md         ← Core agent logic
+  ├── VERSION_AGENT_PROMPT.md                ← Command specs
+  ├── VERSION_AGENT_USAGE.md                 ← Examples & guide
+  ├── VERSION_AGENT_IMPLEMENTATION.md        ← Setup instructions
+  └── QUICK_REFERENCE.txt                    ← This file
+  
+  📁 version/
+  ├── v1.0.md                                ← Old releases
+  ├── v1.1.md
+  └── v1.2.0.md                              ← NEW (after release)
+  
+  📄 package.json                            ← Updated version field
+  
+  📄 CHANGELOG.md                            ← Optional master changelog
+
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                          TROUBLESHOOTING                                 ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+  ❌ "Git status has uncommitted changes"
+     FIX: git add . && git commit -m "work in progress"
+     THEN: retry /manage-release bump-version
+  
+  ❌ "gh: command not found"
+     FIX: brew install gh (macOS)
+          sudo apt install gh (Linux)
+     THEN: gh auth login
+  
+  ❌ "Tag vX.Y.Z already exists"
+     FIX: git push origin vX.Y.Z  (if not pushed yet)
+     OR:  Delete tag and retry
+
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                         SEMANTIC VERSIONING                              ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+  X.Y.Z = MAJOR.MINOR.PATCH
+  
+  1.0.0 → Initial release
+  1.1.0 → New feature (bump MINOR)
+  1.1.1 → Bug fix (bump PATCH)
+  2.0.0 → Breaking change (bump MAJOR)
+  
+  Types in bump-version:
+  --type major   → 1.2.0 becomes 2.0.0
+  --type minor   → 1.2.0 becomes 1.3.0
+  --type patch   → 1.2.0 becomes 1.2.1
+
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                          QUICK SETUP                                     ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+  1. Verify gh CLI:
+     gh --version
+  
+  2. Authenticate:
+     gh auth login
+  
+  3. Test agent:
+     /manage-release list-versions
+  
+  4. Start releasing:
+     /manage-release bump-version --version 1.2.0 --type minor
+
+
+═══════════════════════════════════════════════════════════════════════════
+
+Questions? Read the full docs in .planning/ folder!
+
