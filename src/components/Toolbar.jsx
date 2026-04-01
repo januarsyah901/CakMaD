@@ -1,4 +1,4 @@
-import { Bold, Italic, Heading1, Heading2, Link, Code, Minus } from 'lucide-react';
+import { Bold, Italic, Heading1, Heading2, Link, Code, Minus, Maximize, Eye, EyeOff } from 'lucide-react';
 
 const TOOLS = [
   { icon: Bold, label: 'Bold', text: '**bold**', selectionOffset: 2 },
@@ -10,19 +10,47 @@ const TOOLS = [
   { icon: Minus, label: 'Divider', text: '\n---\n', selectionOffset: 5 },
 ];
 
-export default function Toolbar({ onInsert }) {
+export default function Toolbar({ onInsert, isFocusMode, toggleFocusMode, isPreviewVisible, togglePreview }) {
   return (
-    <div className="flex items-center space-x-2 bg-gray-100 dark:bg-dark-700 px-4 py-2 border-b border-gray-200 dark:border-gray-600 transition-colors">
-      {TOOLS.map(({ icon: Icon, label, text, selectionOffset }) => (
+    <div className="flex flex-wrap items-center justify-between w-full bg-gray-100 dark:bg-dark-700 px-2 sm:px-4 py-1.5 sm:py-2 border-b border-gray-200 dark:border-gray-600 transition-colors">
+      <div className="flex items-center space-x-1 sm:space-x-2">
+        {TOOLS.map(({ icon: Icon, label, text, selectionOffset }) => (
+          <button
+            key={label}
+            onClick={() => onInsert(text, selectionOffset)}
+            title={label}
+            className="p-1 sm:p-1.5 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          >
+            <Icon size={18} />
+          </button>
+        ))}
+      </div>
+
+      <div className="flex items-center space-x-1 sm:space-x-2 border-l border-gray-300 dark:border-gray-600 pl-2 sm:pl-4">
         <button
-          key={label}
-          onClick={() => onInsert(text, selectionOffset)}
-          title={label}
-          className="p-1.5 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          onClick={togglePreview}
+          title={isPreviewVisible ? "Hide Preview" : "Show Preview"}
+          className={`p-1 sm:p-1.5 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+            !isPreviewVisible 
+            ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' 
+            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+          }`}
         >
-          <Icon size={18} />
+          {isPreviewVisible ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
-      ))}
+
+        <button
+          onClick={() => toggleFocusMode()}
+          title="Toggle Focus Mode"
+          className={`p-1 sm:p-1.5 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+            isFocusMode 
+            ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' 
+            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+          }`}
+        >
+          <Maximize size={18} />
+        </button>
+      </div>
     </div>
   );
 }
