@@ -11,7 +11,6 @@ import ExportModal from './components/ExportModal';
 
 import { useMarkdown } from './hooks/useMarkdown';
 import { useScrollSync } from './hooks/useScrollSync';
-import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useFocusMode } from './hooks/useFocusMode';
 import { countWords, countChars, countCharsNoSpace } from './utils/wordCount';
 
@@ -56,16 +55,6 @@ export default function App() {
     setContent((prev) => prev + text);
   }, [setContent]);
 
-  // Keyboard Shortcuts
-  useKeyboardShortcuts({
-    onSave: () => {
-      localStorage.setItem('markdown_editor_content', content);
-    },
-    onToggleFocus: toggleFocusMode,
-    onTogglePreview: () => setIsPreviewVisible((prev) => !prev),
-    onExport: () => setIsExportModalOpen(true),
-    isFocusMode
-  });
 
   // Calculate stats
   const words = countWords(content);
