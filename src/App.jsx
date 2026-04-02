@@ -11,6 +11,9 @@ import ExportModal from './components/ExportModal';
 import Sidebar from './components/Sidebar';
 import TabBar from './components/TabBar';
 import DropZone from './components/DropZone';
+import TableEditorModal from './components/TableEditorModal';
+import CustomCssPanel from './components/CustomCssPanel';
+import TemplateModal from './components/TemplateModal';
 
 import { useFileManager } from './hooks/useFileManager';
 import { useScrollSync } from './hooks/useScrollSync';
@@ -18,6 +21,7 @@ import { useFocusMode } from './hooks/useFocusMode';
 import { countWords, countChars, countCharsNoSpace } from './utils/wordCount';
 import { saveAsMd } from './utils/exportMd';
 import { readMdFile } from './utils/importMd';
+import { imageToBase64 } from './utils/imageToBase64';
 
 export default function App() {
   const {
@@ -42,6 +46,25 @@ export default function App() {
   const { syncEnabled, toggleSync } = useScrollSync(previewScrollContainerRef);
 
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isTableModalOpen, setIsTableModalOpen] = useState(false);
+  const [isCustomCssOpen, setIsCustomCssOpen] = useState(false);
+  const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
+
+  // v1.3 Persistent States
+  const [selectedFont, setSelectedFont] = useState(() => {
+    return localStorage.getItem('md-editor-font') || 'sans-serif';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('md-editor-font', selectedFont);
+  }, [selectedFont]);
+
+  const customCss = activeDoc?.customCss || '';
+  const setCustomCss = (newCss) => {
+    if (activeDoc) {
+      updateContent(activeContent, { customCss: newCss });
+    }
+  };
 
   // Dark Mode State
   const [isDark, setIsDark] = useState(() => {
@@ -70,8 +93,46 @@ export default function App() {
   const toggleDarkMode = () => setIsDark(!isDark);
 
   const handleInsert = useCallback((text) => {
+    // Basic append for now, ideally we use cursor position from Editor ref
     updateContent(activeContent + text);
   }, [activeContent, updateContent]);
+
+  const handleImageUpload = async (file) => {
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Image too large! Max 2MB allowed.");
+      return;
+    }
+    
+    try {
+      const base64 = await imageToBase64(file);
+      const imgTag = `\n![${file.name}](${base64})\n`;
+      handleInsert(imgTag);
+      toast.success("Image added ✓");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to upload image");
+    }
+  };
+
+  const handlePaste = (e) => {
+    const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+    for (const item of items) {
+      if (item.type.indexOf('image') !== -1) {
+        const file = item.getAsFile();
+        handleImageUpload(file);
+      }
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files);
+    files.forEach(file => {
+      if (file.type.startsWith('image/')) {
+        handleImageUpload(file);
+      }
+    });
+  };
 
   const handleDropFile = async (file) => {
     try {
@@ -100,11 +161,30 @@ export default function App() {
 
   return (
     <div className={`flex flex-col h-screen bg-gray-50 dark:bg-dark-900 text-gray-900 dark:text-gray-100 transition-colors font-sans overflow-hidden`}>
-      <Toaster position="bottom-right" toastOptions={{ duration: 2500 }} />
       <ExportModal 
         isOpen={isExportModalOpen} 
         onClose={() => setIsExportModalOpen(false)} 
         getPreviewRef={() => previewRef.current}
+        selectedFont={selectedFont}
+      />
+
+      <TableEditorModal
+        isOpen={isTableModalOpen}
+        onClose={() => setIsTableModalOpen(false)}
+        onInsert={handleInsert}
+      />
+
+      <CustomCssPanel
+        isOpen={isCustomCssOpen}
+        onClose={() => setIsCustomCssOpen(false)}
+        css={customCss}
+        onCssChange={setCustomCss}
+      />
+
+      <TemplateModal
+        isOpen={isTemplateModalOpen}
+        onClose={() => setIsTemplateModalOpen(false)}
+        onSelect={(template) => updateContent(template.content)}
       />
 
       {/* Header - Only visible when NOT in focus mode */}
@@ -122,7 +202,7 @@ export default function App() {
               M
             </div>
             <h1 className="text-xl font-bold tracking-tight text-gray-800 dark:text-gray-100 hidden sm:block">
-              Markdown Editor
+              Cak MaD
             </h1>
           </div>
 
@@ -167,12 +247,15 @@ export default function App() {
             {activeTabs.length > 0 ? (
               <>
                 <div className={`transition-all duration-300 ease-in-out ${isFocusMode ? 'h-0 opacity-0 overflow-hidden shrink-0' : 'h-auto opacity-100 shrink-0'}`}>
-                  <Toolbar 
+                   <Toolbar 
                     onInsert={handleInsert} 
                     isFocusMode={isFocusMode} 
                     toggleFocusMode={toggleFocusMode}
                     isPreviewVisible={isPreviewVisible}
                     togglePreview={() => setIsPreviewVisible(!isPreviewVisible)}
+                    onOpenTableModal={() => setIsTableModalOpen(true)}
+                    selectedFont={selectedFont}
+                    onFontChange={setSelectedFont}
                   />
                 </div>
 
@@ -183,9 +266,13 @@ export default function App() {
 
                   <PanelGroup direction="horizontal" autoSaveId="mde_v11_panels">
                     <Panel id="editor-panel" minSize={20} collapsible={isPreviewVisible} order={1}>
-                      <div className="h-full border-r border-gray-200 dark:border-gray-700 flex flex-col relative w-full overflow-hidden">
-                        <Editor value={activeContent} onChange={updateContent} isDark={isDark} ref={editorRef} />
-                      </div>
+                       <div 
+                          className="h-full border-r border-gray-200 dark:border-gray-700 flex flex-col relative w-full overflow-hidden"
+                          onPaste={handlePaste}
+                          onDrop={handleDrop}
+                        >
+                          <Editor value={activeContent} onChange={updateContent} isDark={isDark} ref={editorRef} />
+                        </div>
                     </Panel>
 
                     {isPreviewVisible && (
@@ -203,9 +290,14 @@ export default function App() {
                             ref={previewScrollContainerRef}
                             className="h-full bg-white dark:bg-dark-900 relative w-full overflow-y-auto flex flex-col px-6 sm:px-10 py-8 scroll-smooth"
                           >
-                            <div className="w-full max-w-4xl mx-auto pb-16">
-                              <Preview content={activeContent} ref={previewRef} />
-                            </div>
+                             <div className="w-full max-w-4xl mx-auto pb-16">
+                               <Preview 
+                                content={activeContent} 
+                                ref={previewRef} 
+                                selectedFont={selectedFont}
+                                customCss={customCss}
+                               />
+                             </div>
                           </div>
                         </Panel>
                       </>
@@ -218,11 +310,13 @@ export default function App() {
                     words={words} 
                     chars={chars} 
                     charsNoSpace={charsNoSpace} 
-                    syncEnabled={syncEnabled} 
+                     syncEnabled={syncEnabled} 
                     toggleSync={toggleSync}
                     onExportModal={() => setIsExportModalOpen(true)}
                     onSaveMd={handleSaveMd}
                     onOpenMd={handleDropFile}
+                    onOpenTemplateModal={() => setIsTemplateModalOpen(true)}
+                    onToggleCustomCss={() => setIsCustomCssOpen(!isCustomCssOpen)}
                   />
                 </div>
               </>
@@ -231,8 +325,8 @@ export default function App() {
                 <FileQuestion size={48} className="mb-4 opacity-50" />
                 <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">No Document Open</h2>
                 <p className="mb-6">Select a document from the sidebar or create a new one.</p>
-                <button
-                  onClick={() => createDocument('Untitled', '')}
+                 <button
+                  onClick={() => setIsTemplateModalOpen(true)}
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
                 >
                   Create New Document

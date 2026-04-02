@@ -47,11 +47,11 @@ export function useFileManager() {
   const activeDoc = documents.find(d => d.id === tabs.activeDocId);
   const activeContent = activeDoc ? activeDoc.content : '';
 
-  const updateContent = useCallback((content) => {
+  const updateContent = useCallback((content, metadata = {}) => {
     if (!tabs.activeDocId) return;
     setDocuments(prev => prev.map(doc => {
       if (doc.id === tabs.activeDocId) {
-        const updatedDoc = { ...doc, content, updatedAt: Date.now() };
+        const updatedDoc = { ...doc, content, ...metadata, updatedAt: Date.now() };
         addRecentFile(updatedDoc);
         return updatedDoc;
       }

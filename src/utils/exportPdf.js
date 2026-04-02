@@ -1,6 +1,6 @@
 import html2pdf from 'html2pdf.js';
 
-export const exportToPdf = async ({ element, filename = 'document', paperSize = 'a4', margin = 'Normal', includeTitle = false }) => {
+export const exportToPdf = async ({ element, filename = 'document', paperSize = 'a4', margin = 'Normal', includeTitle = false, selectedFont }) => {
   if (!element) return;
 
   const marginMap = {
@@ -15,6 +15,10 @@ export const exportToPdf = async ({ element, filename = 'document', paperSize = 
   // Clone the element to avoid changing actual UI if we inject title page
   const wrapper = document.createElement('div');
   wrapper.className = 'markdown-preview w-full';
+  
+  if (selectedFont) {
+    wrapper.style.fontFamily = selectedFont;
+  }
   
   // Inject title if needed
   if (includeTitle) {

@@ -1,6 +1,6 @@
 # 📝 Modern Markdown PDF Editor
 
-![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.3.0-blue.svg)
 ![React](https://img.shields.io/badge/React-19-blue.svg)
 ![Vite](https://img.shields.io/badge/Vite-8-purple.svg)
 ![Tailwind](https://img.shields.io/badge/Tailwind-3-blue.svg)
@@ -10,6 +10,14 @@ A professional, distraction-free Markdown editor built with React and Vite. Edit
 ## ✨ Features
 
 - **🚀 Performance-First**: Built with Vite 8 for blazing-fast development and build cycles.
+- **⚡ Content Power-ups (v1.3)**:
+  - **Table Editor GUI**: Insert complex markdown tables with a visual interface.
+  - **Image Paste/Upload**: Drag & drop or paste images directly into the editor (auto-converted to Base64).
+  - **Math Support**: Render inline ($formula$) and block ($$formula$$) LaTeX math using KaTeX.
+  - **Mermaid Diagrams**: Create flowcharts, sequence diagrams, and more with Mermaid.js.
+  - **Font Customization**: Choose from Poppins, Playfair Display, Lora, Fira Code, or Times New Roman.
+  - **Custom CSS Overrides**: Add document-specific CSS to live-style your preview panel.
+  - **Template Starter**: Start new documents from README, Blog, Resume, or Meeting Note templates.
 - **📁 Multi-Document Management**: 
   - Sidebar file explorer to manage all your documents.
   - Tabbed interface to work on multiple files simultaneously.
@@ -82,5 +90,3 @@ A professional, distraction-free Markdown editor built with React and Vite. Edit
 This project is private and for personal use.
 
 ---
-
-Built with ❤️ by **Bang Jan**

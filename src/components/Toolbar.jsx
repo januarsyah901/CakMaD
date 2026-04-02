@@ -1,4 +1,5 @@
-import { Bold, Italic, Heading1, Heading2, Link, Code, Minus, Maximize, Eye, EyeOff } from 'lucide-react';
+import { Bold, Italic, Heading1, Heading2, Link, Code, Minus, Maximize, Eye, EyeOff, Table, Sigma } from 'lucide-react';
+import FontSelector from './FontSelector';
 
 const TOOLS = [
   { icon: Bold, label: 'Bold', text: '**bold**', selectionOffset: 2 },
@@ -7,27 +8,37 @@ const TOOLS = [
   { icon: Heading2, label: 'H2', text: '## Heading 2\n', selectionOffset: 3 },
   { icon: Link, label: 'Link', text: '[title](url)', selectionOffset: 1 },
   { icon: Code, label: 'Code', text: '`code`', selectionOffset: 1 },
+  { icon: Table, label: 'Table', isModal: true },
+  { icon: Sigma, label: 'Math', text: '$$ E = mc^2 $$', selectionOffset: 3 },
   { icon: Minus, label: 'Divider', text: '\n---\n', selectionOffset: 5 },
 ];
 
-export default function Toolbar({ onInsert, isFocusMode, toggleFocusMode, isPreviewVisible, togglePreview }) {
+export default function Toolbar({ 
+  onInsert, isFocusMode, toggleFocusMode, isPreviewVisible, togglePreview, 
+  onOpenTableModal, selectedFont, onFontChange 
+}) {
   return (
     <div className="flex flex-wrap items-center justify-between w-full bg-gray-100 dark:bg-dark-700 px-2 sm:px-4 py-1.5 sm:py-2 border-b border-gray-200 dark:border-gray-600 transition-colors">
       <div className="flex items-center space-x-1 sm:space-x-2">
-        {/* eslint-disable-next-line no-unused-vars */}
-        {TOOLS.map(({ icon: Icon, label, text, selectionOffset }) => (
+        {TOOLS.map(({ icon: Icon, label, text, selectionOffset, isModal }) => (
           <button
             key={label}
-            onClick={() => onInsert(text, selectionOffset)}
+            onClick={() => isModal ? onOpenTableModal() : onInsert(text, selectionOffset)}
             title={label}
             className="p-1 sm:p-1.5 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
           >
             <Icon size={18} />
           </button>
         ))}
+        
+        <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1 hidden sm:block" />
+        
+        <div className="hidden md:block">
+          <FontSelector selectedFont={selectedFont} onSelect={onFontChange} />
+        </div>
       </div>
 
-      <div className="flex items-center space-x-1 sm:space-x-2 border-l border-gray-300 dark:border-gray-600 pl-2 sm:pl-4">
+      <div className="flex items-center space-x-1 sm:space-x-2 border-l border-gray-300 dark:border-gray-600 pl-2 sm:pl-2">
         <button
           onClick={togglePreview}
           title={isPreviewVisible ? "Hide Preview" : "Show Preview"}
