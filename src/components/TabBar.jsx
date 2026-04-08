@@ -1,15 +1,55 @@
-import React from 'react';
-import { Plus, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { Plus, X, GripVertical } from 'lucide-react';
 
-export default function TabBar({ tabs, activeTabId, onTabClick, onTabClose, onNewTab }) {
+export default function TabBar({ tabs, activeTabId, onTabClick, onTabClose, onNewTab, onReorder }) {
+  const [draggedIndex, setDraggedIndex] = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
+
+  const handleDragStart = (e, index) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    // Create a ghost image if needed, but default is fine
+    // e.dataTransfer.setDragImage(e.target, 0, 0);
+  };
+
+  const handleDragOver = (e, index) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (draggedIndex === index) return;
+    setDragOverIndex(index);
+  };
+
+  const handleDrop = (e, index) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (draggedIndex !== null && draggedIndex !== index) {
+      onReorder(draggedIndex, index);
+    }
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
   return (
     <div className="flex items-end h-10 border-b border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-[#1e1e1e] overflow-x-auto w-full no-scrollbar relative shrink-0">
       <div className="flex h-[36px] min-w-max mt-auto items-end space-x-0.5 px-0.5 relative z-10 w-full">
-        {tabs.map((tab) => {
+        {tabs.map((tab, index) => {
           const isActive = tab.id === activeTabId;
+          const isDragging = draggedIndex === index;
+          const isDragOver = dragOverIndex === index;
+
           return (
             <div
               key={tab.id}
+              draggable
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDrop={(e) => handleDrop(e, index)}
+              onDragEnd={handleDragEnd}
               onClick={() => onTabClick(tab.id)}
               className={`
                 group flex items-center h-full px-3 py-1 text-sm border-t border-l border-r rounded-t-lg
@@ -17,6 +57,8 @@ export default function TabBar({ tabs, activeTabId, onTabClick, onTabClose, onNe
                 ${isActive 
                   ? 'bg-white dark:bg-dark-900 border-gray-200 dark:border-gray-700 text-blue-600 dark:text-blue-400 font-medium z-10 shadow-[0_-2px_0_0_#3b82f6] shadow-[0_1px_0_0_white] dark:shadow-[0_1px_0_0_#111827]' 
                   : 'bg-transparent border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#2d2d2d] hover:text-gray-900 dark:hover:text-gray-200 -mb-[1px]'}
+                ${isDragging ? 'opacity-40 grayscale scale-95' : 'opacity-100'}
+                ${isDragOver ? 'border-r-2 border-r-blue-500 z-20' : ''}
               `}
             >
               <div 

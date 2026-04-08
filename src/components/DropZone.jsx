@@ -5,7 +5,9 @@ export default function DropZone({ onDrop, children }) {
 
   const handleDragOver = (e) => {
     e.preventDefault();
-    setIsDragOver(true);
+    if (e.dataTransfer.types.includes('Files')) {
+      setIsDragOver(true);
+    }
   };
 
   const handleDragLeave = (e) => {

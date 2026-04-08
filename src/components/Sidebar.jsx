@@ -1,12 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import FileItem from './FileItem';
-import { PlusCircle, Search, Clock, File as FileIcon } from 'lucide-react';
-import { useRecentFiles } from '../hooks/useRecentFiles';
+import { PlusCircle } from 'lucide-react';
 
-export default function Sidebar({ documents, activeDocId, onCreate, onOpen, onRename, onDelete, isVisible }) {
-  const { recentFiles } = useRecentFiles();
-  
+export default function Sidebar({ documents, activeDocId, onCreate, onOpen, onRename, onDelete, onReorder, isVisible }) {
+  const [draggedIndex, setDraggedIndex] = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
+
   if (!isVisible) return null;
+
+  const handleDragStart = (e, index) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e, index) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (draggedIndex === index) return;
+    setDragOverIndex(index);
+  };
+
+  const handleDrop = (e, index) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (draggedIndex !== null && draggedIndex !== index) {
+      onReorder(draggedIndex, index);
+    }
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
 
   return (
     <div className="w-64 flex-shrink-0 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-dark-900 flex flex-col h-full overflow-hidden transition-all duration-300">
@@ -25,15 +52,28 @@ export default function Sidebar({ documents, activeDocId, onCreate, onOpen, onRe
       
       <div className="flex-1 overflow-y-auto">
         <div className="py-2">
-          {documents.map(doc => (
-            <FileItem
+          {documents.map((doc, index) => (
+            <div
               key={doc.id}
-              document={doc}
-              isActive={doc.id === activeDocId}
-              onClick={() => onOpen(doc.id)}
-              onRename={(id, newTitle) => onRename(id, newTitle)}
-              onDelete={onDelete}
-            />
+              draggable
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDrop={(e) => handleDrop(e, index)}
+              onDragEnd={handleDragEnd}
+              className={`
+                transition-all duration-150 relative
+                ${draggedIndex === index ? 'opacity-40 grayscale scale-95' : 'opacity-100'}
+                ${dragOverIndex === index ? 'border-b-2 border-b-blue-500' : ''}
+              `}
+            >
+              <FileItem
+                document={doc}
+                isActive={doc.id === activeDocId}
+                onClick={() => onOpen(doc.id)}
+                onRename={(id, newTitle) => onRename(id, newTitle)}
+                onDelete={onDelete}
+              />
+            </div>
           ))}
           {documents.length === 0 && (
             <div className="text-center p-4 text-gray-500 text-sm">
@@ -42,7 +82,6 @@ export default function Sidebar({ documents, activeDocId, onCreate, onOpen, onRe
           )}
         </div>
       </div>
-
     </div>
   );
 }

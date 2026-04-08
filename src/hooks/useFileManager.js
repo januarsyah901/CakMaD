@@ -105,6 +105,24 @@ export function useFileManager() {
     if (doc) addRecentFile({ ...doc, title: newTitle });
   }, [documents, addRecentFile]);
 
+  const reorderTabs = useCallback((startIndex, endIndex) => {
+    setTabs(prev => {
+      const result = Array.from(prev.activeTabIds);
+      const [removed] = result.splice(startIndex, 1);
+      result.splice(endIndex, 0, removed);
+      return { ...prev, activeTabIds: result };
+    });
+  }, []);
+
+  const reorderDocuments = useCallback((startIndex, endIndex) => {
+    setDocuments(prev => {
+      const result = Array.from(prev);
+      const [removed] = result.splice(startIndex, 1);
+      result.splice(endIndex, 0, removed);
+      return result;
+    });
+  }, []);
+
   return {
     documents,
     activeDocId: tabs.activeDocId,
@@ -116,6 +134,8 @@ export function useFileManager() {
     openDocument,
     closeTab,
     deleteDocument,
-    renameDocument
+    renameDocument,
+    reorderTabs,
+    reorderDocuments
   };
 }

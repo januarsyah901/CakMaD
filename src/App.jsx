@@ -27,7 +27,8 @@ import { imageToBase64 } from './utils/imageToBase64';
 export default function App() {
   const {
     documents, activeDocId, activeTabIds, activeDoc, activeContent,
-    updateContent, createDocument, openDocument, closeTab, deleteDocument, renameDocument
+    updateContent, createDocument, openDocument, closeTab, deleteDocument, renameDocument,
+    reorderTabs, reorderDocuments
   } = useFileManager();
 
   const { isFocusMode, toggleFocusMode } = useFocusMode();
@@ -311,6 +312,7 @@ export default function App() {
           onOpen={openDocument}
           onRename={renameDocument}
           onDelete={handleDeleteDocument}
+          onReorder={reorderDocuments}
         />
 
         {/* Main Editor Area */}
@@ -323,6 +325,7 @@ export default function App() {
                 onTabClick={openDocument}
                 onTabClose={closeTab}
                 onNewTab={() => createDocument('Untitled', '')}
+                onReorder={reorderTabs}
               />
             )}
 
