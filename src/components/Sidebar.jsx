@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import FileItem from './FileItem';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, X } from 'lucide-react';
 
-export default function Sidebar({ documents, activeDocId, onCreate, onOpen, onRename, onDelete, onReorder, isVisible }) {
+export default function Sidebar({ 
+  documents, activeDocId, onCreate, onOpen, onRename, onDelete, 
+  onReorder, isVisible, isMobile, onClose 
+}) {
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [dragOverIndex, setDragOverIndex] = useState(null);
 
@@ -36,17 +39,31 @@ export default function Sidebar({ documents, activeDocId, onCreate, onOpen, onRe
   };
 
   return (
-    <div className="w-64 flex-shrink-0 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-dark-900 flex flex-col h-full overflow-hidden transition-all duration-300">
+    <div className={`
+      ${isMobile ? 'fixed inset-y-0 left-0 z-30 shadow-2xl' : 'relative flex-shrink-0 border-r'} 
+      w-64 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-dark-900 flex flex-col h-full overflow-hidden transition-all duration-300
+    `}>
       <div className="p-3 bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700 flex flex-col gap-2 relative z-10">
         <div className="flex items-center justify-between text-gray-700 dark:text-gray-300 font-bold mb-1">
           <span className="text-sm uppercase tracking-wider">Explorer</span>
-          <button 
-            onClick={() => onCreate('Untitled')}
-            className="p-1 rounded text-blue-600 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-700 dark:hover:text-blue-300"
-            title="New Document"
-          >
-            <PlusCircle size={18} />
-          </button>
+          <div className="flex items-center gap-1">
+            <button 
+              onClick={() => onCreate('Untitled')}
+              className="p-1 rounded text-blue-600 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-700 dark:hover:text-blue-300"
+              title="New Document"
+            >
+              <PlusCircle size={18} />
+            </button>
+            {isMobile && (
+              <button 
+                onClick={onClose}
+                className="p-1 rounded text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                title="Close Sidebar"
+              >
+                <X size={18} />
+              </button>
+            )}
+          </div>
         </div>
       </div>
       

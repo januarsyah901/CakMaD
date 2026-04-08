@@ -51,6 +51,21 @@ export default function App() {
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
   const [isCustomCssOpen, setIsCustomCssOpen] = useState(false);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
+  
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 1024 : false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Close sidebar on mobile when switching documents or creating new ones
+  useEffect(() => {
+    if (isMobile && isSidebarOpen) {
+      setIsSidebarOpen(false);
+    }
+  }, [activeDocId]);
   const [confirmConfig, setConfirmConfig] = useState({ 
     isOpen: false, title: '', message: '', type: 'warning', onConfirm: null, confirmText: 'Confirm' 
   });
@@ -313,7 +328,17 @@ export default function App() {
           onRename={renameDocument}
           onDelete={handleDeleteDocument}
           onReorder={reorderDocuments}
+          isMobile={isMobile}
+          onClose={() => setIsSidebarOpen(false)}
         />
+
+        {/* Sidebar Overlay for Mobile */}
+        {isMobile && isSidebarOpen && !isFocusMode && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-20 backdrop-blur-sm"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
 
         {/* Main Editor Area */}
         <DropZone onDrop={handleDropFile}>
@@ -351,10 +376,10 @@ export default function App() {
                     Press ESC to exit focus mode
                   </div>
 
-                  <PanelGroup direction="horizontal" autoSaveId="mde_v11_panels">
+                  <PanelGroup direction={isMobile ? "vertical" : "horizontal"} autoSaveId="mde_v11_panels">
                     <Panel id="editor-panel" minSize={20} collapsible={isPreviewVisible} order={1}>
                        <div 
-                          className="h-full border-r border-gray-200 dark:border-gray-700 flex flex-col relative w-full overflow-hidden"
+                          className={`h-full border-r ${isMobile ? 'border-b border-r-0' : 'border-r'} border-gray-200 dark:border-gray-700 flex flex-col relative w-full overflow-hidden`}
                           onPaste={handlePaste}
                           onDrop={handleDrop}
                         >
@@ -370,8 +395,8 @@ export default function App() {
 
                     {isPreviewVisible && (
                       <>
-                        <PanelResizeHandle className="w-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-blue-400 dark:hover:bg-blue-600 active:bg-blue-500 transition-colors cursor-col-resize z-20 flex items-center justify-center">
-                          <div className="h-6 flex flex-col justify-center space-y-0.5">
+                        <PanelResizeHandle className={`${isMobile ? 'h-1.5 w-full cursor-row-resize' : 'w-1.5 cursor-col-resize'} bg-gray-200 dark:bg-gray-700 hover:bg-blue-400 dark:hover:bg-blue-600 active:bg-blue-500 transition-colors z-20 flex items-center justify-center`}>
+                          <div className={`${isMobile ? 'w-6 h-full flex-row space-x-0.5 space-y-0' : 'h-6 flex-col space-y-0.5 space-x-0'} flex justify-center`}>
                             <div className="w-0.5 h-1 bg-gray-400 dark:bg-gray-500 rounded-full"></div>
                             <div className="w-0.5 h-1 bg-gray-400 dark:bg-gray-500 rounded-full"></div>
                             <div className="w-0.5 h-1 bg-gray-400 dark:bg-gray-500 rounded-full"></div>
@@ -381,7 +406,7 @@ export default function App() {
                         <Panel id="preview-panel" minSize={20} order={2}>
                           <div 
                             ref={previewScrollContainerRef}
-                            className="h-full bg-white dark:bg-dark-900 relative w-full overflow-y-auto flex flex-col px-6 sm:px-10 py-8 scroll-smooth"
+                            className="h-full bg-white dark:bg-dark-900 relative w-full overflow-y-auto flex flex-col px-4 sm:px-10 py-6 sm:py-8 scroll-smooth"
                           >
                              <div className="w-full max-w-4xl mx-auto pb-16">
                                <Preview 
