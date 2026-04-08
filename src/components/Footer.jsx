@@ -25,7 +25,7 @@ export default function Footer({
   return (
     <footer className="flex flex-wrap items-center justify-between px-4 py-2 bg-white dark:bg-dark-800 shadow-sm border-t border-gray-200 dark:border-gray-700 text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 font-medium z-10 w-full gap-2">
       <div className="flex items-center space-x-3 sm:space-x-4">
-        <span className="text-gray-500 dark:text-gray-500">© 2025 Cak MaD</span>
+        <span className="text-gray-500 dark:text-gray-500">© {new Date().getFullYear()} Cak MaD</span>
         <span className="hidden xs:inline">Words: {words}</span>
         <span className="hidden xs:inline">Chars: {chars}</span>
       </div>

@@ -4,8 +4,9 @@ import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { githubLight } from '@uiw/codemirror-theme-github';
+import { EditorView } from '@codemirror/view';
 
-const Editor = forwardRef(({ value, onChange, isDark }, ref) => {
+const Editor = forwardRef(({ value, onChange, isDark, lineWrapping }, ref) => {
   const editorRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
@@ -24,15 +25,21 @@ const Editor = forwardRef(({ value, onChange, isDark }, ref) => {
     }
   }));
 
+  const extensions = [
+    markdown({ base: markdownLanguage, codeLanguages: languages }),
+  ];
+
+  if (lineWrapping) {
+    extensions.push(EditorView.lineWrapping);
+  }
+
   return (
     <div className="h-full w-full overflow-hidden bg-white dark:bg-[#282c34]">
       <CodeMirror
         ref={editorRef}
         value={value}
         height="100%"
-        extensions={[
-          markdown({ base: markdownLanguage, codeLanguages: languages }),
-        ]}
+        extensions={extensions}
         theme={isDark ? oneDark : githubLight}
         onChange={onChange}
         className="h-full text-base [&>.cm-editor]:h-full [&>.cm-editor]:outline-none"
@@ -66,3 +73,4 @@ const Editor = forwardRef(({ value, onChange, isDark }, ref) => {
 Editor.displayName = 'Editor';
 
 export default Editor;
+

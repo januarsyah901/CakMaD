@@ -63,6 +63,14 @@ export default function App() {
     return localStorage.getItem('md-editor-font') || 'sans-serif';
   });
 
+  const [isLineWrapping, setIsLineWrapping] = useState(() => {
+    return localStorage.getItem('md-editor-line-wrapping') !== 'false';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('md-editor-line-wrapping', isLineWrapping.toString());
+  }, [isLineWrapping]);
+
   useEffect(() => {
     localStorage.setItem('md-editor-font', selectedFont);
   }, [selectedFont]);
@@ -330,6 +338,8 @@ export default function App() {
                     onOpenTableModal={() => setIsTableModalOpen(true)}
                     selectedFont={selectedFont}
                     onFontChange={setSelectedFont}
+                    isLineWrapping={isLineWrapping}
+                    toggleLineWrapping={() => setIsLineWrapping(!isLineWrapping)}
                   />
                 </div>
 
@@ -345,7 +355,13 @@ export default function App() {
                           onPaste={handlePaste}
                           onDrop={handleDrop}
                         >
-                          <Editor value={activeContent} onChange={(val) => updateContent(val)} isDark={isDark} ref={editorRef} />
+                          <Editor 
+                            value={activeContent} 
+                            onChange={(val) => updateContent(val)} 
+                            isDark={isDark} 
+                            ref={editorRef} 
+                            lineWrapping={isLineWrapping}
+                          />
                         </div>
                     </Panel>
 
