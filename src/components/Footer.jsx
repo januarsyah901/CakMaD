@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { FileText, Settings, Upload, Download, ArrowRightLeft } from 'lucide-react';
+import { FileText, Settings, Upload, Download, ArrowRightLeft, Heart } from 'lucide-react';
 
 export default function Footer({ 
   words, chars, charsNoSpace, syncEnabled, toggleSync, onExportModal, 
@@ -25,10 +25,20 @@ export default function Footer({
   return (
     <footer className="flex flex-wrap items-center justify-between px-4 py-2 bg-white dark:bg-dark-800 shadow-sm border-t border-gray-200 dark:border-gray-700 text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 font-medium z-10 w-full gap-2">
       <div className="flex items-center space-x-3 sm:space-x-4">
-        <span className="text-gray-500 dark:text-gray-500">© {new Date().getFullYear()} Cak MaD</span>
-        <span className="hidden xs:inline">Words: {words}</span>
-        <span className="hidden xs:inline">Chars: {chars}</span>
-      </div>
+         <span className="text-gray-500 dark:text-gray-500">© {new Date().getFullYear()} Cak MaD</span>
+         <a 
+           href="https://saweria.co/januarsyah" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           className="flex items-center space-x-1 text-orange-500 hover:text-orange-600 dark:hover:text-orange-400 transition"
+           title="Buy me a martabak"
+         >
+           <Heart size={12} fill="currentColor" />
+           <span className="hidden sm:inline text-[9px]">Martabak</span>
+         </a>
+         <span className="hidden xs:inline">Words: {words}</span>
+         <span className="hidden xs:inline">Chars: {chars}</span>
+       </div>
       <div className="flex items-center space-x-2 sm:space-x-3 text-gray-500 overflow-x-auto no-scrollbar">
         <button
           onClick={onOpenTemplateModal}

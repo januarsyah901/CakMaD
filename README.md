@@ -78,6 +78,12 @@ Speed up your workflow with these intuitive shortcuts:
 - **Math Formatting**: Use single `$` for inline math like $E=mc^2$ and double `$$` for block formulas.
 - **Custom CSS**: Use the "Custom CSS" button in the footer to add specific styles (e.g., `body { color: blue; }`) that only affect the current document's preview and PDF.
 
+## ☕ Support This Project
+
+If you find Cak MaD Editor helpful, consider supporting its development!
+
+[![Buy me a martabak](https://img.shields.io/badge/Buy%20me%20a%20martabak-F97316?style=for-the-badge&logo=coffee&logoColor=white)](https://saweria.co/januarsyah)
+
 ## 📄 License
 
 This project is private and for personal use.
