@@ -34,7 +34,7 @@ export default function Footer({
            title="Buy me a martabak"
          >
            <Heart size={12} fill="currentColor" />
-           <span className="hidden sm:inline text-[9px]">Martabak</span>
+           <span className="hidden sm:inline text-[9px]">Buy Me a Martabak</span>
          </a>
          <span className="hidden xs:inline">Words: {words}</span>
          <span className="hidden xs:inline">Chars: {chars}</span>
