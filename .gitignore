@@ -14,6 +14,7 @@ dist-ssr
 
 # Agent and planning directories
 .agent/
+.opencode/
 .planning/
 version/
 

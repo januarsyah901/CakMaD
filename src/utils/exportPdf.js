@@ -65,10 +65,11 @@ export const exportToPdf = async ({ element, filename = 'document', paperSize = 
       scrollX: 0,
       scrollY: 0
     },
-    jsPDF: { unit: 'mm', format: paperSize, orientation: 'portrait' }
+    jsPDF: { unit: 'mm', format: paperSize, orientation: 'portrait' },
+    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
   };
 
   return html2pdf().set(opt).from(wrapper).toPdf().get('pdf').then((pdf) => {
     // Optional: Add page numbers or headers/footers here via jsPDF if needed
-  }).save();
+   }).save();
 };

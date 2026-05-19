@@ -76,3 +76,39 @@
 .markdown-preview img {
   @apply max-w-full h-auto rounded-lg shadow-sm;
 }
+
+/* Print Styles */
+@media print {
+  .markdown-preview {
+    color: #000 !important;
+    background: transparent !important;
+  }
+  
+  .markdown-preview h1, 
+  .markdown-preview h2, 
+  .markdown-preview h3, 
+  .markdown-preview h4, 
+  .markdown-preview h5, 
+  .markdown-preview h6 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  .markdown-preview p, 
+  .markdown-preview li, 
+  .markdown-preview blockquote, 
+  .markdown-preview pre, 
+  .markdown-preview table, 
+  .markdown-preview tr, 
+  .markdown-preview img {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .markdown-preview hr {
+    page-break-after: always;
+    break-after: page;
+    border: none;
+    margin: 0;
+  }
+}
