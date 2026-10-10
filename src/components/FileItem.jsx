@@ -16,10 +16,10 @@ export default function FileItem({ document, isActive, onClick, onRename, onDele
 
   return (
     <div 
-      className={`group flex items-center justify-between px-3 py-2 cursor-pointer transition-colors ${
+      className={`group flex items-center justify-between mx-2 px-3 py-2 rounded-lg cursor-pointer transition-all ${
         isActive 
-          ? 'bg-brand-50 dark:bg-brand-950/30 text-brand-800 dark:text-brand-300 border-l-2 border-brand-500 font-medium' 
-          : 'hover:bg-gray-100 dark:hover:bg-dark-700 text-gray-700 dark:text-gray-300 border-l-2 border-transparent'
+          ? 'bg-brand-50 dark:bg-brand-950/40 text-brand-900 dark:text-brand-200 border-2 border-brand-500 shadow-sm font-semibold ring-1 ring-brand-500/20' 
+          : 'hover:bg-gray-100 dark:hover:bg-dark-700 text-gray-700 dark:text-gray-300 border-2 border-transparent'
       }`}
       onClick={() => { if (!isEditing) onClick(); }}
     >

@@ -49,7 +49,7 @@ export default function Sidebar({
           <div className="flex items-center gap-1">
             <button 
               onClick={() => onCreate('Untitled')}
-              className="p-1 rounded text-blue-600 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-700 dark:hover:text-blue-300"
+              className="p-1 rounded text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-950/40 hover:text-brand-700 dark:hover:text-brand-300 transition"
               title="New Document"
             >
               <PlusCircle size={18} />
@@ -68,7 +68,7 @@ export default function Sidebar({
       </div>
       
       <div className="flex-1 overflow-y-auto">
-        <div className="py-2">
+        <div className="py-2 space-y-1">
           {documents.map((doc, index) => (
             <div
               key={doc.id}
@@ -80,7 +80,7 @@ export default function Sidebar({
               className={`
                 transition-all duration-150 relative
                 ${draggedIndex === index ? 'opacity-40 grayscale scale-95' : 'opacity-100'}
-                ${dragOverIndex === index ? 'border-b-2 border-b-blue-500' : ''}
+                ${dragOverIndex === index ? 'border-b-2 border-b-brand-500' : ''}
               `}
             >
               <FileItem
