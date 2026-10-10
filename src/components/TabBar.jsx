@@ -52,11 +52,11 @@ export default function TabBar({ tabs, activeTabId, onTabClick, onTabClose, onNe
               onDragEnd={handleDragEnd}
               onClick={() => onTabClick(tab.id)}
               className={`
-                group flex items-center h-full px-3 py-1 text-sm border-t border-l border-r rounded-t-lg
+                group flex items-center h-full px-3 py-1 text-sm border-t-2 border-l border-r rounded-t-lg
                 cursor-pointer transition-all duration-150 relative min-w-32 max-w-48
                 ${isActive 
-                  ? 'bg-white dark:bg-dark-900 border-gray-200 dark:border-gray-700 text-brand-600 dark:text-brand-400 font-medium z-10 shadow-[0_-2px_0_0_#ff9d00] shadow-[0_1px_0_0_white] dark:shadow-[0_1px_0_0_#111827]' 
-                  : 'bg-transparent border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#2d2d2d] hover:text-gray-900 dark:hover:text-gray-200 -mb-[1px]'}
+                  ? 'bg-white dark:bg-dark-900 border-t-brand-500 border-l-brand-400/60 border-r-brand-400/60 dark:border-l-brand-600/50 dark:border-r-brand-600/50 text-brand-700 dark:text-brand-300 font-semibold z-10 shadow-sm -mb-[1px] ring-1 ring-brand-500/20 dark:ring-brand-400/20' 
+                  : 'bg-transparent border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-200/70 dark:hover:bg-[#2d2d2d] hover:text-gray-900 dark:hover:text-gray-200'}
                 ${isDragging ? 'opacity-40 grayscale scale-95' : 'opacity-100'}
                 ${isDragOver ? 'border-r-2 border-r-brand-500 z-20' : ''}
               `}
