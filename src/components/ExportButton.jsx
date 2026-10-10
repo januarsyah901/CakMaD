@@ -35,7 +35,7 @@ export default function ExportButton({ getPreviewRef }) {
       <button
         onClick={handleExport}
         disabled={isExporting || !filename.trim()}
-        className="flex items-center gap-1 text-sm font-medium px-2 py-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded transition-colors"
+        className="flex items-center gap-1 text-sm font-medium px-2 py-1 bg-brand-500 hover:bg-brand-600 disabled:bg-brand-300 text-white rounded transition-colors shadow-sm"
       >
         <Download size={14} />
         <span>{isExporting ? 'Exporting...' : 'Export PDF'}</span>

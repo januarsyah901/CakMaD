@@ -46,9 +46,9 @@ export default function TemplateModal({ isOpen, onClose, onSelect }) {
 
   const getCategoryIcon = (cat) => {
     switch (cat) {
-      case 'professional': return <Sparkles size={16} className="text-indigo-500" />;
+      case 'professional': return <Sparkles size={16} className="text-brand-500" />;
       case 'academic': return <BookOpen size={16} className="text-amber-500" />;
-      case 'documentation': return <FileCode size={16} className="text-blue-500" />;
+      case 'documentation': return <FileCode size={16} className="text-orange-500" />;
       default: return <PenTool size={16} className="text-emerald-500" />;
     }
   };
@@ -63,7 +63,7 @@ export default function TemplateModal({ isOpen, onClose, onSelect }) {
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-dark-900">
           <div>
             <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-              <Sparkles size={20} className="text-indigo-600 dark:text-indigo-400" />
+              <Sparkles size={20} className="text-brand-500" />
               Template Library
             </h3>
             <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
@@ -81,8 +81,8 @@ export default function TemplateModal({ isOpen, onClose, onSelect }) {
 
         {/* Recently Used Bar */}
         {recentTemplates.length > 0 && (
-          <div className="px-6 py-2.5 bg-indigo-50/50 dark:bg-indigo-950/20 border-b border-indigo-100 dark:border-indigo-900/40 flex items-center gap-2 overflow-x-auto text-xs">
-            <span className="flex items-center gap-1 font-semibold text-indigo-700 dark:text-indigo-300 shrink-0">
+          <div className="px-6 py-2.5 bg-brand-50/50 dark:bg-brand-950/20 border-b border-brand-200 dark:border-brand-900/40 flex items-center gap-2 overflow-x-auto text-xs">
+            <span className="flex items-center gap-1 font-semibold text-brand-700 dark:text-brand-300 shrink-0">
               <Clock size={13} /> Recently Used:
             </span>
             <div className="flex items-center gap-2">
@@ -90,7 +90,7 @@ export default function TemplateModal({ isOpen, onClose, onSelect }) {
                 <button
                   key={t.id}
                   onClick={() => handleSelect(t)}
-                  className="px-2.5 py-1 bg-white dark:bg-dark-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/50 border border-indigo-200 dark:border-indigo-800 rounded-md text-gray-700 dark:text-gray-300 transition flex items-center gap-1.5"
+                  className="px-2.5 py-1 bg-white dark:bg-dark-800 hover:bg-brand-50 dark:hover:bg-brand-900/50 border border-brand-200 dark:border-brand-800 rounded-md text-gray-700 dark:text-gray-300 transition flex items-center gap-1.5"
                 >
                   {getCategoryIcon(t.category)}
                   <span>{t.label}</span>
@@ -108,7 +108,7 @@ export default function TemplateModal({ isOpen, onClose, onSelect }) {
               onClick={() => setActiveCategory(cat.id)}
               className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition shrink-0 ${
                 activeCategory === cat.id
-                  ? 'bg-indigo-600 text-white shadow-sm'
+                  ? 'bg-brand-500 text-white shadow-sm'
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-dark-700'
               }`}
             >
@@ -129,7 +129,7 @@ export default function TemplateModal({ isOpen, onClose, onSelect }) {
                   onClick={() => setSelectedTemplate(t)}
                   className={`p-4 rounded-xl border text-left cursor-pointer transition flex items-start justify-between gap-3 ${
                     isSelected
-                      ? 'border-indigo-600 bg-indigo-50/60 dark:bg-indigo-950/30 dark:border-indigo-500 shadow-sm'
+                      ? 'border-brand-500 bg-brand-50/60 dark:bg-brand-950/30 dark:border-brand-500 shadow-sm'
                       : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-dark-800'
                   }`}
                 >
@@ -155,7 +155,7 @@ export default function TemplateModal({ isOpen, onClose, onSelect }) {
                       e.stopPropagation();
                       handleSelect(t);
                     }}
-                    className="shrink-0 p-2 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-lg transition"
+                    className="shrink-0 p-2 text-brand-600 dark:text-brand-400 hover:bg-brand-100 dark:hover:bg-brand-900/50 rounded-lg transition"
                     title="Use this template"
                   >
                     <ArrowRight size={18} />
@@ -172,7 +172,7 @@ export default function TemplateModal({ isOpen, onClose, onSelect }) {
                 <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
                   <Eye size={14} /> Preview
                 </span>
-                <span className="text-xs font-medium text-indigo-600 dark:text-indigo-400">
+                <span className="text-xs font-medium text-brand-600 dark:text-brand-400">
                   {selectedTemplate?.label}
                 </span>
               </div>
@@ -185,7 +185,7 @@ export default function TemplateModal({ isOpen, onClose, onSelect }) {
             <div className="pt-4 flex items-center gap-3">
               <button
                 onClick={() => handleSelect(selectedTemplate)}
-                className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-lg shadow-sm transition flex items-center justify-center gap-2"
+                className="w-full py-2.5 px-4 bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white font-medium text-sm rounded-lg shadow-sm transition flex items-center justify-center gap-2"
               >
                 <Check size={16} /> Use Selected Template
               </button>

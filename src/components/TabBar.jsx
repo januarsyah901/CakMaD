@@ -55,14 +55,14 @@ export default function TabBar({ tabs, activeTabId, onTabClick, onTabClose, onNe
                 group flex items-center h-full px-3 py-1 text-sm border-t border-l border-r rounded-t-lg
                 cursor-pointer transition-all duration-150 relative min-w-32 max-w-48
                 ${isActive 
-                  ? 'bg-white dark:bg-dark-900 border-gray-200 dark:border-gray-700 text-blue-600 dark:text-blue-400 font-medium z-10 shadow-[0_-2px_0_0_#3b82f6] shadow-[0_1px_0_0_white] dark:shadow-[0_1px_0_0_#111827]' 
+                  ? 'bg-white dark:bg-dark-900 border-gray-200 dark:border-gray-700 text-brand-600 dark:text-brand-400 font-medium z-10 shadow-[0_-2px_0_0_#ff9d00] shadow-[0_1px_0_0_white] dark:shadow-[0_1px_0_0_#111827]' 
                   : 'bg-transparent border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#2d2d2d] hover:text-gray-900 dark:hover:text-gray-200 -mb-[1px]'}
                 ${isDragging ? 'opacity-40 grayscale scale-95' : 'opacity-100'}
-                ${isDragOver ? 'border-r-2 border-r-blue-500 z-20' : ''}
+                ${isDragOver ? 'border-r-2 border-r-brand-500 z-20' : ''}
               `}
             >
               <div 
-                className={`w-2 h-2 rounded-full mr-2 shrink-0 ${isActive ? 'bg-blue-500' : 'bg-transparent'}`} 
+                className={`w-2 h-2 rounded-full mr-2 shrink-0 ${isActive ? 'bg-brand-500' : 'bg-transparent'}`} 
               />
               <span className="truncate flex-1 select-none" title={tab.title}>
                 {tab.title}

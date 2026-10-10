@@ -33,7 +33,7 @@ export default function ConfirmModal({
           type === 'warning' ? 'bg-amber-500' :
           type === 'error' ? 'bg-red-500' :
           type === 'success' ? 'bg-green-500' :
-          type === 'info' ? 'bg-blue-500' : 'bg-indigo-500'
+          'bg-brand-500'
         }`} />
 
         <button 
@@ -66,7 +66,7 @@ export default function ConfirmModal({
                 type === 'error' ? 'bg-red-600 hover:bg-red-700 shadow-red-500/20' :
                 type === 'warning' ? 'bg-amber-600 hover:bg-amber-700 shadow-amber-500/20' :
                 type === 'success' ? 'bg-green-600 hover:bg-green-700 shadow-green-500/20' :
-                'bg-blue-600 hover:bg-blue-700 shadow-blue-500/20'
+                'bg-brand-500 hover:bg-brand-600 shadow-brand-500/20'
               }`}
             >
               {confirmText}

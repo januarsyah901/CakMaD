@@ -55,7 +55,7 @@ export default function OnboardingModal({ isOpen, onClose }) {
             <X size={18} />
           </button>
           
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-600/20 mb-3">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-brand-500 text-white shadow-md shadow-brand-500/20 mb-3">
             <Sparkles size={24} />
           </div>
 
@@ -76,7 +76,7 @@ export default function OnboardingModal({ isOpen, onClose }) {
                 key={step.number}
                 className="flex items-start gap-3.5 p-3 rounded-xl bg-gray-50/80 dark:bg-dark-900/60 border border-gray-100 dark:border-gray-700/60"
               >
-                <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 font-bold text-xs shrink-0 mt-0.5">
+                <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 font-bold text-xs shrink-0 mt-0.5">
                   {step.number}
                 </div>
                 <div className="space-y-0.5">
@@ -96,7 +96,7 @@ export default function OnboardingModal({ isOpen, onClose }) {
         <div className="p-6 pt-2 bg-gray-50/50 dark:bg-dark-900/40 border-t border-gray-100 dark:border-gray-700/60">
           <button
             onClick={handleFinish}
-            className="w-full py-3 px-5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-medium text-sm rounded-xl shadow-sm transition flex items-center justify-center gap-2"
+            className="w-full py-3 px-5 bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white font-medium text-sm rounded-xl shadow-sm transition flex items-center justify-center gap-2"
           >
             Start Editing
             <ArrowRight size={16} />

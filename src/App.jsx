@@ -383,13 +383,13 @@ export default function App() {
             <div className="flex bg-gray-100 dark:bg-dark-700 p-0.5 rounded-lg text-xs font-semibold">
               <button
                 onClick={() => setMobileViewMode('editor')}
-                className={`px-3 py-1.5 rounded-md transition ${mobileViewMode === 'editor' ? 'bg-white dark:bg-dark-800 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
+                className={`px-3 py-1.5 rounded-md transition ${mobileViewMode === 'editor' ? 'bg-white dark:bg-dark-800 text-brand-600 dark:text-brand-400 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
               >
                 Editor
               </button>
               <button
                 onClick={() => setMobileViewMode('preview')}
-                className={`px-3 py-1.5 rounded-md transition ${mobileViewMode === 'preview' ? 'bg-white dark:bg-dark-800 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
+                className={`px-3 py-1.5 rounded-md transition ${mobileViewMode === 'preview' ? 'bg-white dark:bg-dark-800 text-brand-600 dark:text-brand-400 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
               >
                 Preview
               </button>
@@ -400,7 +400,7 @@ export default function App() {
           <div className="flex items-center gap-1 sm:gap-2">
             <button
               onClick={() => setIsOnboardingOpen(true)}
-              className="p-2 rounded-lg text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-dark-700 transition"
+              className="p-2 rounded-lg text-gray-500 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400 hover:bg-gray-100 dark:hover:bg-dark-700 transition"
               title="Tutorial & Workflow Guide"
             >
               <HelpCircle size={19} />
@@ -506,7 +506,7 @@ export default function App() {
 
                       {isPreviewVisible && (
                         <>
-                          <PanelResizeHandle className="w-1.5 cursor-col-resize bg-gray-200 dark:bg-gray-700 hover:bg-indigo-400 dark:hover:bg-indigo-600 active:bg-indigo-500 transition-colors z-20 flex items-center justify-center">
+                          <PanelResizeHandle className="w-1.5 cursor-col-resize bg-gray-200 dark:bg-gray-700 hover:bg-brand-400 dark:hover:bg-brand-500 active:bg-brand-600 transition-colors z-20 flex items-center justify-center">
                             <div className="h-6 flex-col space-y-0.5 flex justify-center">
                               <div className="w-0.5 h-1 bg-gray-400 dark:bg-gray-500 rounded-full"></div>
                               <div className="w-0.5 h-1 bg-gray-400 dark:bg-gray-500 rounded-full"></div>

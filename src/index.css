@@ -40,7 +40,7 @@
   @apply mb-4;
 }
 .markdown-preview a {
-  @apply text-blue-600 dark:text-blue-400 hover:underline;
+  @apply text-brand-600 dark:text-brand-400 hover:underline;
 }
 .markdown-preview ul {
   @apply list-disc list-outside mb-4 ml-6;
@@ -49,10 +49,10 @@
   @apply list-decimal list-outside mb-4 ml-6;
 }
 .markdown-preview blockquote {
-  @apply border-l-4 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 py-2 px-4 mb-4 italic text-gray-600 dark:text-gray-400 rounded-r;
+  @apply border-l-4 border-brand-500 bg-brand-50/50 dark:bg-brand-950/20 py-2 px-4 mb-4 italic text-gray-700 dark:text-gray-300 rounded-r;
 }
 .markdown-preview code {
-  @apply bg-gray-100 dark:bg-gray-800 text-pink-600 dark:text-pink-400 px-1.5 py-0.5 rounded text-sm font-mono;
+  @apply bg-gray-100 dark:bg-gray-800 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded text-sm font-mono;
 }
 .markdown-preview pre {
   @apply bg-gray-900 dark:bg-[#1e1e1e] text-gray-100 p-4 rounded-lg mb-4 overflow-x-auto;

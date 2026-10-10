@@ -23,10 +23,10 @@ Cak MaD operates on a clean slate studio philosophy. Instead of facing a blank, 
 | Text Secondary Light | `#4b5563` | `--color-text-secondary-light` (`text-gray-600`) | Secondary descriptions, subheadings, and toolbar icons |
 | Text Secondary Dark | `#9ca3af` | `--color-text-secondary-dark` (`dark:text-gray-400`) | Subtitles, helper text, and inactive icons in dark mode |
 | Text Tertiary | `#6b7280` | `--color-text-tertiary` (`text-gray-500`) | Micro-copy, hotkey badges, and word counter tags |
-| Brand Indigo | `#4f46e5` | `--color-brand-indigo` (`bg-indigo-600`, `text-indigo-600`) | Primary CTA buttons, active state indicators, accent focus rings, and export highlight |
-| Brand Indigo Hover | `#4338ca` | `--color-brand-indigo-hover` (`hover:bg-indigo-700`) | Hover state for primary action buttons |
-| Brand Indigo Soft | `#e0e7ff` | `--color-brand-indigo-soft` (`bg-indigo-100`, `dark:bg-indigo-950/40`) | Active tab highlights, badge fills, and toggle active states |
-| Accent Blue | `#2563eb` | `--color-accent-blue` (`bg-blue-600`, `text-blue-600`) | Secondary links, Markdown formatting links, and inline actions |
+| Brand Amber Accent | `#ff9d00` | `--color-brand-primary` (`bg-brand-500`, `text-brand-500`) | Primary CTA buttons, logo accent, active indicators, focus rings, and export highlight |
+| Brand Amber Hover | `#ea8c00` | `--color-brand-hover` (`hover:bg-brand-600`) | Hover state for primary action buttons |
+| Brand Amber Soft | `#fffbeb` | `--color-brand-soft` (`bg-brand-50`, `dark:bg-brand-950/40`) | Active tab highlights, badge fills, and toggle active states |
+| Accent Orange | `#ea580c` | `--color-accent-orange` (`bg-orange-600`, `text-orange-600`) | Secondary badges, warm alerts, and markdown highlight elements |
 | Success Emerald | `#10b981` | `--color-success` (`text-emerald-500`, `bg-emerald-50`) | Export success badges, copy confirmations, and completion marks |
 | Danger Rose | `#ef4444` | `--color-danger` (`text-rose-500`, `bg-rose-50`) | Delete document confirmations and destructive modal warnings |
 

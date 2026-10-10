@@ -75,7 +75,7 @@ export default function ExportModal({ isOpen, onClose, getPreviewRef, selectedFo
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/80 dark:bg-dark-900/80">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center">
               <FileText size={18} />
             </div>
             <div>
@@ -107,7 +107,7 @@ export default function ExportModal({ isOpen, onClose, getPreviewRef, selectedFo
                 type="text"
                 value={filename}
                 onChange={e => setFilename(e.target.value)}
-                className="flex-1 bg-gray-50 dark:bg-dark-900 border border-gray-300 dark:border-gray-600 rounded-l-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:text-gray-100 font-medium"
+                className="flex-1 bg-gray-50 dark:bg-dark-900 border border-gray-300 dark:border-gray-600 rounded-l-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-gray-900 dark:text-gray-100 font-medium"
                 placeholder="document"
               />
               <span className="bg-gray-100 dark:bg-dark-700 border border-l-0 border-gray-300 dark:border-gray-600 px-3.5 py-2 text-sm text-gray-500 dark:text-gray-400 rounded-r-lg font-mono">
@@ -132,7 +132,7 @@ export default function ExportModal({ isOpen, onClose, getPreviewRef, selectedFo
                   onClick={() => setPaperSize(item.id)}
                   className={`py-2 px-3 rounded-lg border text-center transition ${
                     paperSize === item.id
-                      ? 'border-indigo-600 bg-indigo-50/80 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 font-semibold shadow-sm'
+                      ? 'border-brand-500 bg-brand-50/80 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 font-semibold shadow-sm'
                       : 'border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-dark-700'
                   }`}
                 >
@@ -155,7 +155,7 @@ export default function ExportModal({ isOpen, onClose, getPreviewRef, selectedFo
                   onClick={() => setMargin(m)}
                   className={`flex-1 py-1.5 rounded-md text-center transition ${
                     margin === m
-                      ? 'bg-indigo-600 text-white font-medium shadow-sm'
+                      ? 'bg-brand-500 text-white font-medium shadow-sm'
                       : 'text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-dark-700'
                   }`}
                 >
@@ -172,7 +172,7 @@ export default function ExportModal({ isOpen, onClose, getPreviewRef, selectedFo
                 type="checkbox"
                 checked={includeTitle}
                 onChange={e => setIncludeTitle(e.target.checked)}
-                className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
+                className="w-4 h-4 text-brand-600 rounded border-gray-300 focus:ring-brand-500"
               />
               <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                 Include automatic title cover page
@@ -187,8 +187,8 @@ export default function ExportModal({ isOpen, onClose, getPreviewRef, selectedFo
               <span><strong>Document is ready to share!</strong> Your download should begin immediately.</span>
             </div>
           ) : (
-            <div className="p-3 bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40 rounded-xl flex items-center gap-2 text-indigo-900 dark:text-indigo-200 text-xs">
-              <Eye size={15} className="text-indigo-500 shrink-0" />
+            <div className="p-3 bg-brand-50/50 dark:bg-brand-950/20 border border-brand-200 dark:border-brand-900/40 rounded-xl flex items-center gap-2 text-brand-900 dark:text-brand-200 text-xs">
+              <Eye size={15} className="text-brand-500 shrink-0" />
               <span>Uses current active reader font: <strong>{selectedFont}</strong></span>
             </div>
           )}
@@ -205,7 +205,7 @@ export default function ExportModal({ isOpen, onClose, getPreviewRef, selectedFo
           <button
             onClick={handleExport}
             disabled={isExporting || !filename.trim()}
-            className="px-5 py-2.5 flex items-center gap-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-sm transition disabled:opacity-50"
+            className="px-5 py-2.5 flex items-center gap-2 text-sm font-semibold bg-brand-500 hover:bg-brand-600 text-white rounded-lg shadow-sm transition disabled:opacity-50"
           >
             <Download size={16} /> {isExporting ? 'Preparing PDF...' : 'Download PDF'}
           </button>

@@ -98,7 +98,7 @@ export default function TableEditorModal({ isOpen, onClose, onInsert }) {
           </button>
           <button
             onClick={handleGenerate}
-            className="px-6 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-lg shadow-blue-500/20 transition-all active:scale-95"
+            className="px-6 py-2 text-sm font-medium text-white bg-brand-500 hover:bg-brand-600 rounded-lg shadow-md shadow-brand-500/20 transition-all active:scale-95"
           >
             Generate Table
           </button>

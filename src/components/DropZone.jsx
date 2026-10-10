@@ -35,8 +35,8 @@ export default function DropZone({ onDrop, children }) {
       onDrop={handleDrop}
     >
       {isDragOver && (
-        <div className="absolute inset-0 bg-blue-500 bg-opacity-20 z-50 flex items-center justify-center border-4 border-blue-500 border-dashed m-2 rounded-lg pointer-events-none transition-all">
-          <div className="bg-white dark:bg-dark-800 px-6 py-4 rounded-xl shadow-2xl text-lg font-medium text-blue-600 dark:text-blue-400">
+        <div className="absolute inset-0 bg-brand-500 bg-opacity-20 z-50 flex items-center justify-center border-4 border-brand-500 border-dashed m-2 rounded-lg pointer-events-none transition-all">
+          <div className="bg-white dark:bg-dark-800 px-6 py-4 rounded-xl shadow-2xl text-lg font-medium text-brand-600 dark:text-brand-400">
             Drop .md file to open
           </div>
         </div>

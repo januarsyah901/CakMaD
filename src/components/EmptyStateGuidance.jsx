@@ -18,7 +18,7 @@ export default function EmptyStateGuidance({ onCreateDoc, onImportFile }) {
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-2xl mx-auto w-full">
       {/* Title & Guidance */}
-      <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 mb-4 shadow-sm border border-indigo-100 dark:border-indigo-900/50">
+      <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 mb-4 shadow-sm border border-brand-200 dark:border-brand-900/50">
         <Sparkles size={28} />
       </div>
 
@@ -34,12 +34,12 @@ export default function EmptyStateGuidance({ onCreateDoc, onImportFile }) {
         {/* Create AI Report */}
         <button
           onClick={() => handleSelectTemplate('ai-report')}
-          className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-800 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow-md transition group"
+          className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-800 hover:border-brand-500 dark:hover:border-brand-400 hover:shadow-md transition group"
         >
-          <div className="w-9 h-9 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+          <div className="w-9 h-9 rounded-lg bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
             <Sparkles size={18} />
           </div>
-          <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+          <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
             Create AI Report
           </h4>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -50,12 +50,12 @@ export default function EmptyStateGuidance({ onCreateDoc, onImportFile }) {
         {/* Create Documentation */}
         <button
           onClick={() => handleSelectTemplate('readme')}
-          className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-800 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow-md transition group"
+          className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-800 hover:border-brand-500 dark:hover:border-brand-400 hover:shadow-md transition group"
         >
-          <div className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+          <div className="w-9 h-9 rounded-lg bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
             <FileCode size={18} />
           </div>
-          <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+          <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
             Create Documentation
           </h4>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -66,7 +66,7 @@ export default function EmptyStateGuidance({ onCreateDoc, onImportFile }) {
         {/* Create Notes */}
         <button
           onClick={() => handleSelectTemplate('meeting')}
-          className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-800 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow-md transition group"
+          className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-800 hover:border-brand-500 dark:hover:border-brand-400 hover:shadow-md transition group"
         >
           <div className="w-9 h-9 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
             <PenTool size={18} />
@@ -80,7 +80,7 @@ export default function EmptyStateGuidance({ onCreateDoc, onImportFile }) {
         </button>
 
         {/* Import Markdown */}
-        <label className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-800 hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow-md transition group cursor-pointer block">
+        <label className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-800 hover:border-brand-500 dark:hover:border-brand-400 hover:shadow-md transition group cursor-pointer block">
           <input
             type="file"
             accept=".md,.markdown,.txt"
@@ -108,7 +108,7 @@ export default function EmptyStateGuidance({ onCreateDoc, onImportFile }) {
       <div className="mt-6 flex items-center gap-2">
         <button
           onClick={handleCreateBlank}
-          className="text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 transition"
+          className="text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1 transition"
         >
           <Plus size={14} /> Start with a blank document
         </button>

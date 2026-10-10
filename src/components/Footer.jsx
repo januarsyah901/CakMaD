@@ -89,7 +89,7 @@ export default function Footer({
           onClick={toggleSync}
           className={`flex items-center space-x-1.5 px-2 py-1 rounded transition-colors ${
             syncEnabled 
-              ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' 
+              ? 'bg-brand-50 text-brand-700 dark:bg-brand-950/40 dark:text-brand-300' 
               : 'hover:bg-gray-100 dark:hover:bg-gray-700'
           }`}
           title="Toggle Scroll Sync"
@@ -100,7 +100,7 @@ export default function Footer({
 
         <button
           onClick={onExportModal}
-          className="flex items-center space-x-1.5 px-2 py-1 rounded bg-blue-600 hover:bg-blue-700 transition text-white font-semibold"
+          className="flex items-center space-x-1.5 px-2.5 py-1 rounded bg-brand-500 hover:bg-brand-600 transition text-white font-semibold shadow-sm"
         >
           <Download size={14} />
           <span className="hidden sm:inline">Export PDF</span>

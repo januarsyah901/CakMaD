@@ -43,9 +43,9 @@ export default function Toolbar({
         <button
           onClick={toggleLineWrapping}
           title={isLineWrapping ? "Disable Word Wrap" : "Enable Word Wrap"}
-          className={`p-1 sm:p-1.5 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+          className={`p-1 sm:p-1.5 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors ${
             isLineWrapping 
-            ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' 
+            ? 'bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400' 
             : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
           }`}
         >
@@ -55,9 +55,9 @@ export default function Toolbar({
         <button
           onClick={togglePreview}
           title={isPreviewVisible ? "Hide Preview" : "Show Preview"}
-          className={`p-1 sm:p-1.5 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+          className={`p-1 sm:p-1.5 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors ${
             !isPreviewVisible 
-            ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' 
+            ? 'bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400' 
             : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
           }`}
         >
@@ -67,9 +67,9 @@ export default function Toolbar({
         <button
           onClick={() => toggleFocusMode()}
           title="Toggle Focus Mode"
-          className={`p-1 sm:p-1.5 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+          className={`p-1 sm:p-1.5 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors ${
             isFocusMode 
-            ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' 
+            ? 'bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400' 
             : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
           }`}
         >

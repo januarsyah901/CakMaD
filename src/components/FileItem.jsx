@@ -18,7 +18,7 @@ export default function FileItem({ document, isActive, onClick, onRename, onDele
     <div 
       className={`group flex items-center justify-between px-3 py-2 cursor-pointer transition-colors ${
         isActive 
-          ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border-l-2 border-blue-500' 
+          ? 'bg-brand-50 dark:bg-brand-950/30 text-brand-800 dark:text-brand-300 border-l-2 border-brand-500 font-medium' 
           : 'hover:bg-gray-100 dark:hover:bg-dark-700 text-gray-700 dark:text-gray-300 border-l-2 border-transparent'
       }`}
       onClick={() => { if (!isEditing) onClick(); }}
@@ -36,7 +36,7 @@ export default function FileItem({ document, isActive, onClick, onRename, onDele
                 setIsEditing(false);
               }
             }}
-            className="flex-1 min-w-0 bg-white dark:bg-dark-900 border border-blue-400 text-sm px-1.5 py-0.5 rounded outline-none text-gray-900 dark:text-gray-100"
+            className="flex-1 min-w-0 bg-white dark:bg-dark-900 border border-brand-500 text-sm px-1.5 py-0.5 rounded outline-none text-gray-900 dark:text-gray-100"
             autoFocus
           />
           <button onClick={handleRenameSubmit} className="p-1 hover:text-green-600 transition-colors">
