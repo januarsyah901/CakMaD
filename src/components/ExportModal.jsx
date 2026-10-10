@@ -54,6 +54,7 @@ export default function ExportModal({ isOpen, onClose, getPreviewRef, selectedFo
       analytics.track('Export Succeeded', { filename, paperSize });
       toast.success('Document ready & exported ✓', { id: toastId });
       setExportComplete(true);
+      window.open('https://saweria.co/januarsyah', '_blank', 'noopener,noreferrer');
       setTimeout(() => {
         onClose();
       }, 1400);

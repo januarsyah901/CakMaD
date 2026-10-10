@@ -218,6 +218,7 @@ export default function App() {
       analytics.track('Export Started', { format: 'markdown' });
       saveAsMd(activeContent, activeDoc.title);
       toast.success("File saved ✓");
+      window.open('https://saweria.co/januarsyah', '_blank', 'noopener,noreferrer');
     }
   };
 
