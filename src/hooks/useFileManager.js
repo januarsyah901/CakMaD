@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { createNewDocument, DEFAULT_CONTENT } from '../store/documentStore';
+import { documentStorage } from '../store/documentStorage';
 import { useRecentFiles } from './useRecentFiles';
 
 const STORAGE_DOCS_KEY = 'md_editor_documents';
@@ -33,11 +34,11 @@ export function useFileManager() {
     } catch (e) {
       console.error(e);
     }
-    return { activeDocId: documents[0].id, activeTabIds: [documents[0].id] };
+    return { activeDocId: documents[0]?.id || null, activeTabIds: documents[0] ? [documents[0].id] : [] };
   });
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_DOCS_KEY, JSON.stringify(documents));
+    documentStorage.saveAll(documents);
   }, [documents]);
 
   useEffect(() => {

@@ -1,45 +1,138 @@
+export const TEMPLATE_CATEGORIES = [
+  { id: 'all', label: 'All Templates' },
+  { id: 'academic', label: 'Academic' },
+  { id: 'documentation', label: 'Documentation' },
+  { id: 'professional', label: 'Professional' },
+  { id: 'personal', label: 'Personal' }
+];
+
 export const templates = [
   {
-    id: 'blank',
-    label: 'Blank Document',
-    description: 'Start fresh with an empty canvas',
-    content: ''
+    id: 'ai-report',
+    category: 'professional',
+    label: 'AI Executive Report',
+    description: 'Turn AI-generated summaries into executive-ready briefs with key findings and charts',
+    badge: 'Popular',
+    content: `# 📊 Executive Analysis & Summary Report
+
+> Prepared with AI assistance • Reviewed & Formatted via Cak MaD
+> **Date:** 2026-10-10 | **Status:** Final Review
+
+---
+
+## 🎯 Executive Summary
+Provide a concise 2-3 sentence distillation of key conclusions and strategic decisions.
+
+- **Primary Breakthrough:** 42% operational efficiency gain achieved in Q3.
+- **Key Risk Identified:** Supply chain turnaround latency requiring local caching.
+- **Recommended Action:** Allocate expansion resources to automated pipeline infrastructure.
+
+---
+
+## 📈 Key Metrics & Quantitative Findings
+
+| Indicator | Benchmark | Actual Result | Delta (%) |
+| :--- | :--- | :--- | :--- |
+| **Throughput** | 1,200 req/s | 1,740 req/s | +45.0% |
+| **P99 Latency** | < 120 ms | 68 ms | -43.3% |
+| **Error Rate** | < 0.05% | 0.01% | -80.0% |
+
+---
+
+## 🔍 Detailed Strategic Analysis
+
+### 1. Market Opportunity
+Raw AI output often delivers dense unstructured paragraphs. Structuring into subsections ensures clarity across multi-department stakeholders.
+
+### 2. Implementation Roadmap
+\`\`\`mermaid
+graph LR
+    A[Raw AI Prompt] --> B[Cak MaD Polish]
+    B --> C[Visual Preview]
+    C --> D[PDF Export]
+\`\`\`
+
+---
+
+## 💡 Next Steps & Action Items
+- [ ] Present findings at board sync.
+- [ ] Establish automated tracking hooks.
+`
+  },
+  {
+    id: 'research-doc',
+    category: 'academic',
+    label: 'Academic Research Document',
+    description: 'Structured layout for papers, literature reviews, and research methodologies',
+    badge: 'Academic',
+    content: `# 🔬 Research Paper: Methodological Synthesis
+
+**Author:** Academic Researcher  
+**Affiliation:** Faculty of Computing & Informatics  
+**Contact:** researcher@example.ac.id  
+
+---
+
+### Abstract
+This document outlines the core methodology and theoretical foundations of the investigative study. Formatted cleanly with proper citations, equations, and structured theorems.
+
+**Keywords:** Neural Networks, Distributed Systems, Markdown Tooling
+
+---
+
+## 1. Introduction
+Modern research workflows leverage large language models to draft extensive bibliographies and literature reviews. The challenge lies in formatting mathematical representations and standard citations.
+
+## 2. Theoretical Framework
+Let the objective loss function $\\mathcal{L}(\\theta)$ over distribution $\\mathcal{D}$ be represented as:
+
+$$
+\\mathcal{L}(\\theta) = \\mathbb{E}_{(x, y) \\sim \\mathcal{D}} \\left[ -\\sum_{k=1}^K y_k \\log \\hat{y}_k(x; \\theta) \\right]
+$$
+
+Where:
+- $\\theta$ denotes model parameters.
+- $K$ is the total class cardinality.
+
+---
+
+## 3. Results & Discussion
+Document your observations here. Markdown tables and callout quotes enhance reading comprehension for peer review.
+`
   },
   {
     id: 'readme',
-    label: 'Project README',
-    description: 'Comprehensive structure for open-source or enterprise projects',
-    content: `# 🚀 Project Title
+    category: 'documentation',
+    label: 'Project Documentation (README)',
+    description: 'Clean technical documentation for software projects and developer repositories',
+    badge: 'Technical',
+    content: `# 🚀 Project Documentation
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)[![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
+> Clean, maintainable documentation built for developers.
 
-> A brief, powerful description of what this project does and why it exists.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)](#)
 
-## 📑 Table of Contents
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Getting Started](#-getting-started)
-- [API Reference](#-api-reference)
+---
 
-## ✨ Features
-- ⚡️ **High Performance:** Optimized for speed and scalability.
-- 🔒 **Secure:** Built-in authentication and authorization.
-- 📱 **Responsive:** Mobile-first approach using Tailwind CSS.
+## 📑 Architecture Overview
 
-## 💻 Tech Stack
-- **Frontend:** Next.js, Tailwind CSS
-- **Backend:** Node.js, Prisma ORM
-- **Infrastructure:** Docker, CapRover
+\`\`\`mermaid
+graph TD
+    User-->|Markdown In| Editor[Cak MaD Studio]
+    Editor-->Preview[Live Preview]
+    Preview-->PDF[Clean PDF Export]
+\`\`\`
 
-## 🚀 Getting Started
-### Prerequisites
-- Node.js >= 18.x
-- Docker
+## 🛠 Features
+- ⚡️ **Zero Latency:** Instant dual-pane markdown rendering.
+- 🎨 **Typography Engine:** Multi-font presets designed for reading comfort.
+- 🔒 **Local Privacy:** No content leaves the client browser.
 
-### Installation
+## 💻 Quick Start
 \`\`\`bash
 # Clone the repository
-git clone https://github.com/januarsyah901/project-name.git
+git clone https://github.com/example/project.git
 
 # Install dependencies
 npm install
@@ -50,151 +143,82 @@ npm run dev
 `
   },
   {
-    id: 'blog',
-    label: 'Technical Blog Post',
-    description: 'SEO-optimized article layout with frontmatter',
-    content: `
-
-# Mastering Modern Web Development
-
-## Introduction
-Grab the reader's attention immediately. State the problem you're solving and what they will learn by reading this article.
-
-## The Core Concept
-Explain the technical details clearly. Use code blocks to demonstrate your points.
-
-\`\`\`javascript
-// Example implementation
-const optimize = (data) => {
-  return data.filter(Boolean).map(item => item.value);
-};
-\`\`\`
-
-### Key Takeaways
-1. **Architecture matters:** Plan before you code.
-2. **Tooling:** Use the right tools for the job (e.g., Docker for consistency).
-
-> "Good code is its own best documentation." - Steve McConnell
-
-## Conclusion
-Summarize the main points. What's the next step for the reader?
-
----
-*Enjoyed this post? Check out more on my portfolio at [github.com/januarsyah901](https://github.com/januarsyah901).*
-`
-  },
-  {
-    id: 'resume',
-    label: 'Developer Resume',
-    description: 'ATS-friendly, clean professional CV format',
-    content: `# Januarsyah Akbar
-**Software Developer**
-
-📍 Yogyakarta, Indonesia | 🐙 [github.com/januarsyah901](https://github.com/januarsyah901)
-
----
-
-## 👨‍💻 Summary
-A passionate software developer with expertise in modern web technologies and a strong focus on building scalable, user-centric applications. Experienced in leading development teams and managing end-to-end project lifecycles.
-
-## 💼 Experience
-
-### Lead Developer | AutoService Web Panel
-*March 2026 – Present*
-- Architected and developed a comprehensive web panel for digitizing auto service workshop inventory and operations.
-- Implemented robust database structures using Prisma and Next.js.
-
-### VR Developer | Perioperative Simulation
-*Early 2026*
-- Engineered a VR simulation for the Faculty of Nursing using Oculus Quest.
-- Collaborated with cross-functional teams to define Product Requirement Documents (PRD).
-
-## 🛠 Technical Skills
-- **Languages:** JavaScript, TypeScript
-- **Frontend:** Next.js, React, Tailwind CSS
-- **Backend & DB:** Node.js, Prisma
-- **DevOps & Tools:** Docker, CapRover, Git
-
-## 🎓 Education
-**Universitas Gadjah Mada (UGM)**
-*Sekolah Vokasi*
-`
-  },
-  {
     id: 'meeting',
-    label: 'Engineering Sync Notes',
-    description: 'Structured format for technical meetings and standups',
-    content: `# 📅 Engineering Sync: [Project Name]
-**Date:** 2026-04-02
-**Facilitator:** Januarsyah Akbar
-**Attendees:** [List names]
+    category: 'personal',
+    label: 'Meeting & Personal Notes',
+    description: 'Organized meeting minutes, personal journal, and daily priorities',
+    badge: 'Notes',
+    content: `# 📝 Meeting Minutes & Daily Journal
+
+**Date:** 2026-10-10  
+**Participants:** Team Leads & Product Designers  
+**Focus:** Phase 1 Product Validation & Rollout  
 
 ---
 
-## 🎯 Objectives
-- Unblock frontend integration.
-- Finalize database schema migration.
+## 📌 Main Discussion Topics
+1. **Product Positioning:** Shift from code editor to beautiful document exporter.
+2. **Onboarding Flow:** Ensure first-time visitors understand the value in < 10 seconds.
+3. **Empty Canvas Mitigation:** Provide starter templates instead of blank screen.
 
-## 🗣 Discussion Points
-1. **API Integration:** Encountered CORS issues on the staging environment.
-2. **Performance:** Need to optimize image loading on the dashboard.
+## ✅ Priority Action Items
+- [ ] Review mobile responsive touch targets.
+- [ ] Audit PDF page-break CSS properties.
+- [ ] Confirm local storage privacy standards.
 
-## 📌 Decisions Made
-- We will migrate to the new Prisma schema by Friday.
-- Docker containers will be used for all local environments to ensure consistency.
+---
 
-## ✅ Action Items
-- [ ] **[Name]:** Update Nginx config on CapRover to fix CORS.
-- [ ] **[Name]:** Implement lazy loading for images.
-- [ ] **[Name]:** Schedule code review for the VR module.
+> "Simplicity is prerequisite for reliability." — Edsger W. Dijkstra
 `
   },
   {
-    id: 'technical',
-    label: 'Architecture Document',
-    description: 'High-level system design and API documentation',
-    content: `# 🏗 System Architecture & API Reference
+    id: 'api-spec',
+    category: 'documentation',
+    label: 'API Specification Reference',
+    description: 'Standard REST / GraphQL endpoint reference and schema definition',
+    badge: 'Specs',
+    content: `# 📡 API Reference Specification
 
-## 1. System Overview
-Provide a high-level description of the system. What business problem does it solve?
+### \`POST /api/v1/documents\`
+Creates a new document entity.
 
-## 2. Infrastructure Diagram
-\`\`\`mermaid
-graph TD;
-    Client-->|HTTPS| LoadBalancer;
-    LoadBalancer-->NextJS_App;
-    NextJS_App-->Node_API;
-    Node_API-->PostgreSQL;
-\`\`\`
+**Request Headers:**
+| Header | Value | Description |
+| :--- | :--- | :--- |
+| \`Content-Type\` | \`application/json\` | Payload encoding |
+| \`Authorization\` | \`Bearer <token>\` | User authentication token |
 
-## 3. Technology Stack
-- **Client:** Next.js
-- **API:** REST / GraphQL
-- **Database:** PostgreSQL (via Prisma)
-- **Deployment:** Docker on CapRover
-
-## 4. API Documentation
-
-### \`GET /api/v1/resource\`
-Fetches a list of resources.
-
-**Headers:**
-| Key | Value | Required |
-|---|---|---|
-| \`Authorization\` | \`Bearer <token>\` | Yes |
-
-**Response (200 OK):**
+**Request Body (JSON):**
 \`\`\`json
 {
-  "success": true,
-  "data": [
-    {
-      "id": "uuid",
-      "name": "Example"
-    }
-  ]
+  "title": "Quarterly Financial Analysis",
+  "content": "# Markdown content...",
+  "settings": {
+    "font": "poppins",
+    "paperSize": "a4"
+  }
 }
 \`\`\`
+
+**Response (201 Created):**
+\`\`\`json
+{
+  "id": "doc-8391-uuid",
+  "status": "success",
+  "createdAt": 1775836800000
+}
+\`\`\`
+`
+  },
+  {
+    id: 'blank',
+    category: 'personal',
+    label: 'Blank Document',
+    description: 'Start fresh with a clean, distraction-free markdown canvas',
+    badge: 'Blank',
+    content: `# Untitled Document
+
+Start writing your thoughts here...
 `
   }
 ];

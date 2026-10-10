@@ -9,6 +9,6 @@ services:
     container_name: markdown-editor-container
     ports:
       - "3030:80"
-    restart: unless-stopped
+    restart: "no"
     environment:
       - NODE_ENV=production

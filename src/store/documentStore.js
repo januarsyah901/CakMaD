@@ -27,13 +27,19 @@ $$
 $$
 `;
 
-export const createNewDocument = (title = "Untitled", content = DEFAULT_CONTENT) => {
+export const createNewDocument = (title = "Untitled", content = DEFAULT_CONTENT, settings = {}) => {
   return {
     id: uuidv4(),
     title,
     content,
     createdAt: Date.now(),
     updatedAt: Date.now(),
-    isPinned: false
+    isPinned: false,
+    settings: {
+      font: 'sans-serif',
+      paperSize: 'a4',
+      margin: 'Normal',
+      ...settings
+    }
   };
 };
