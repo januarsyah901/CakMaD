@@ -45,6 +45,7 @@ export default function MermaidRenderer({ chart }) {
   return (
     <div 
       className="flex justify-center my-6 overflow-x-auto" 
+      data-mermaid-source={chart}
       dangerouslySetInnerHTML={{ __html: svg }} 
     />
   );

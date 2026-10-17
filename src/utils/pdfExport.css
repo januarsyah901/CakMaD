@@ -1,0 +1,55 @@
+/* Only the temporary PDF copy; never the editor preview. */
+.markdown-preview.pdf-export-root {
+  display: flow-root;
+  min-height: 0 !important;
+  max-width: none;
+  height: auto !important;
+  margin: 0;
+  background: #fff !important;
+  color: #1f2937;
+  overflow: visible;
+  overflow-wrap: anywhere;
+}
+.pdf-export-root *, .pdf-export-root *::before, .pdf-export-root *::after {
+  animation: none !important;
+  transition: none !important;
+}
+.pdf-export-root h1, .pdf-export-root h2, .pdf-export-root h3,
+.pdf-export-root h4, .pdf-export-root h5, .pdf-export-root h6 { color: #111827; }
+.pdf-export-root :not(pre) > code {
+  display: inline-block;
+  max-width: 100%;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  vertical-align: baseline;
+  background: #f3f4f6;
+  color: #d97706;
+}
+.pdf-export-root pre { white-space: pre-wrap; overflow-wrap: anywhere; overflow: visible; }
+.pdf-export-root pre code { white-space: inherit; overflow-wrap: inherit; }
+.pdf-export-root table { width: 100%; table-layout: auto; }
+.pdf-export-root th, .pdf-export-root td { min-width: 0; padding: 8px; overflow-wrap: break-word; }
+.pdf-export-root img { max-width: 100%; object-fit: contain; }
+.pdf-export-root .pdf-export-diagram {
+  display: flex;
+  justify-content: center;
+  margin: 24px 0;
+  padding: 0;
+  background: transparent;
+  overflow: visible;
+}
+.pdf-export-root .pdf-export-diagram img { border-radius: 0; box-shadow: none; }
+.pdf-export-root .pdf-list-item { position: relative; list-style: none !important; }
+.pdf-export-root .pdf-list-marker { position: absolute; text-align: right; font: inherit; white-space: nowrap; }
+.pdf-export-root .katex-display { overflow: visible; }
+.pdf-export-root hr { height: 0; margin: 0; border: 0; }
+.pdf-export-root .pdf-export-cover {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.pdf-export-root .pdf-export-cover h1 { font-size: 3.5em; margin: 0 0 20px; }
+.pdf-export-root .pdf-export-cover p { font-size: 1.5em; color: #666; }

@@ -28,3 +28,8 @@ version/
 *.njsproj
 *.sln
 *.sw?
+
+# Temporary reference & export test files
+mdpdf-nomod-fix.zip
+pdf-export-test-complex.md
+pdf-layout-reference.md
