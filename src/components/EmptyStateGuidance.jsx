@@ -18,9 +18,11 @@ export default function EmptyStateGuidance({ onCreateDoc, onImportFile }) {
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-2xl mx-auto w-full">
       {/* Title & Guidance */}
-      <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 mb-4 shadow-sm border border-brand-200 dark:border-brand-900/50">
-        <Sparkles size={28} />
-      </div>
+      <img 
+        src="/icon.svg" 
+        alt="Cak MaD Logo" 
+        className="w-14 h-14 rounded-2xl shadow-sm mb-4" 
+      />
 
       <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
         What do you want to create today?

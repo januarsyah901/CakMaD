@@ -46,7 +46,7 @@ export default function OnboardingModal({ isOpen, onClose }) {
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-6 pb-4 border-b border-gray-100 dark:border-gray-700/80 text-center relative bg-gradient-to-b from-indigo-50/50 to-transparent dark:from-indigo-950/20">
+        <div className="p-6 pb-4 border-b border-gray-100 dark:border-gray-700/80 text-center relative bg-gradient-to-b from-brand-50/60 to-transparent dark:from-brand-950/20">
           <button
             onClick={handleFinish}
             className="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-700 transition"
@@ -55,9 +55,11 @@ export default function OnboardingModal({ isOpen, onClose }) {
             <X size={18} />
           </button>
           
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-brand-500 text-white shadow-md shadow-brand-500/20 mb-3">
-            <Sparkles size={24} />
-          </div>
+          <img 
+            src="/icon.svg" 
+            alt="Cak MaD Logo" 
+            className="w-12 h-12 rounded-xl shadow-md mx-auto mb-3" 
+          />
 
           <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
             Welcome to Cak MaD
