@@ -54,10 +54,17 @@ export default function ExportModal({ isOpen, onClose, getPreviewRef, selectedFo
       analytics.track('Export Succeeded', { filename, paperSize });
       toast.success('Document ready & exported ✓', { id: toastId });
       setExportComplete(true);
-      window.open('https://saweria.co/januarsyah', '_blank', 'noopener,noreferrer');
       setTimeout(() => {
         onClose();
-      }, 1400);
+        try {
+          const popup = window.open('https://saweria.co/januarsyah', '_blank', 'noopener,noreferrer');
+          if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+            window.location.href = 'https://saweria.co/januarsyah';
+          }
+        } catch {
+          window.location.href = 'https://saweria.co/januarsyah';
+        }
+      }, 1000);
     } catch (err) {
       console.error(err);
       toast.error('Failed to export document', { id: toastId });

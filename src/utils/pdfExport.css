@@ -1,12 +1,13 @@
 /* Only the temporary PDF copy; never the editor preview. */
-.markdown-preview.pdf-export-root {
+.markdown-preview.pdf-export-root,
+.dark .markdown-preview.pdf-export-root {
   display: flow-root;
   min-height: 0 !important;
   max-width: none;
   height: auto !important;
   margin: 0;
-  background: #fff !important;
-  color: #1f2937;
+  background: #ffffff !important;
+  color: #1f2937 !important;
   overflow: visible;
   overflow-wrap: anywhere;
 }
@@ -15,21 +16,84 @@
   transition: none !important;
 }
 .pdf-export-root h1, .pdf-export-root h2, .pdf-export-root h3,
-.pdf-export-root h4, .pdf-export-root h5, .pdf-export-root h6 { color: #111827; }
-.pdf-export-root :not(pre) > code {
+.pdf-export-root h4, .pdf-export-root h5, .pdf-export-root h6,
+.dark .pdf-export-root h1, .dark .pdf-export-root h2, .dark .pdf-export-root h3,
+.dark .pdf-export-root h4, .dark .pdf-export-root h5, .dark .pdf-export-root h6 {
+  color: #111827 !important;
+}
+.pdf-export-root p,
+.dark .pdf-export-root p {
+  color: #1f2937 !important;
+}
+.pdf-export-root a,
+.dark .pdf-export-root a {
+  color: #ea8c00 !important;
+}
+.pdf-export-root blockquote,
+.dark .pdf-export-root blockquote {
+  background-color: rgba(255, 251, 235, 0.5) !important;
+  border-left-color: #ff9d00 !important;
+  color: #374151 !important;
+}
+.pdf-export-root :not(pre) > code,
+.dark .pdf-export-root :not(pre) > code {
   display: inline-block;
   max-width: 100%;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   vertical-align: baseline;
-  background: #f3f4f6;
-  color: #d97706;
+  background: #f3f4f6 !important;
+  color: #d97706 !important;
 }
-.pdf-export-root pre { white-space: pre-wrap; overflow-wrap: anywhere; overflow: visible; }
-.pdf-export-root pre code { white-space: inherit; overflow-wrap: inherit; }
-.pdf-export-root table { width: 100%; table-layout: auto; }
-.pdf-export-root th, .pdf-export-root td { min-width: 0; padding: 8px; overflow-wrap: break-word; }
-.pdf-export-root img { max-width: 100%; object-fit: contain; }
+.pdf-export-root pre,
+.dark .pdf-export-root pre {
+  background: #111827 !important;
+  color: #f9fafb !important;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  overflow: visible;
+}
+.pdf-export-root pre code,
+.dark .pdf-export-root pre code {
+  background: transparent !important;
+  color: inherit !important;
+  white-space: inherit;
+  overflow-wrap: inherit;
+}
+.pdf-export-root table,
+.dark .pdf-export-root table {
+  width: 100%;
+  table-layout: auto;
+}
+.pdf-export-root th,
+.dark .pdf-export-root th {
+  background-color: #f3f4f6 !important;
+  color: #111827 !important;
+  border-color: #d1d5db !important;
+  min-width: 0;
+  padding: 8px;
+  overflow-wrap: break-word;
+}
+.pdf-export-root td,
+.dark .pdf-export-root td {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+  border-color: #d1d5db !important;
+  min-width: 0;
+  padding: 8px;
+  overflow-wrap: break-word;
+}
+.pdf-export-root hr,
+.dark .pdf-export-root hr {
+  height: 0;
+  margin: 0;
+  border: 0;
+  border-top: 1px solid #e5e7eb !important;
+}
+.pdf-export-root img {
+  max-width: 100%;
+  object-fit: contain;
+}
 .pdf-export-root .pdf-export-diagram {
   display: flex;
   justify-content: center;
@@ -38,11 +102,29 @@
   background: transparent;
   overflow: visible;
 }
-.pdf-export-root .pdf-export-diagram img { border-radius: 0; box-shadow: none; }
-.pdf-export-root .pdf-list-item { position: relative; list-style: none !important; }
-.pdf-export-root .pdf-list-marker { position: absolute; text-align: right; font: inherit; white-space: nowrap; }
-.pdf-export-root .katex-display { overflow: visible; }
-.pdf-export-root hr { height: 0; margin: 0; border: 0; }
+.pdf-export-root .pdf-export-diagram img {
+  border-radius: 0;
+  box-shadow: none;
+}
+.pdf-export-root .pdf-list-item {
+  position: relative;
+  list-style: none !important;
+}
+.pdf-export-root .pdf-list-marker,
+.dark .pdf-export-root .pdf-list-marker {
+  position: absolute;
+  text-align: right;
+  font: inherit;
+  color: #1f2937 !important;
+  white-space: nowrap;
+}
+.pdf-export-root .katex-display {
+  overflow: visible;
+  color: #111827 !important;
+}
+.pdf-export-root .katex {
+  color: #111827 !important;
+}
 .pdf-export-root .pdf-export-cover {
   display: flex;
   flex-direction: column;
@@ -50,6 +132,16 @@
   justify-content: center;
   text-align: center;
   overflow-wrap: anywhere;
+  background-color: #ffffff !important;
 }
-.pdf-export-root .pdf-export-cover h1 { font-size: 3.5em; margin: 0 0 20px; }
-.pdf-export-root .pdf-export-cover p { font-size: 1.5em; color: #666; }
+.pdf-export-root .pdf-export-cover h1,
+.dark .pdf-export-root .pdf-export-cover h1 {
+  font-size: 3.5em;
+  margin: 0 0 20px;
+  color: #111827 !important;
+}
+.pdf-export-root .pdf-export-cover p,
+.dark .pdf-export-root .pdf-export-cover p {
+  font-size: 1.5em;
+  color: #666666 !important;
+}

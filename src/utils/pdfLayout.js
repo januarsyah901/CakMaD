@@ -80,7 +80,7 @@ async function prepareDiagrams(root, pageHeight) {
     // Mermaid renders labels with measured SVG text instead of foreignObject
     // HTML. Use an explicit system font that also exists inside SVG images.
     const fontFamily = 'Arial, Helvetica, sans-serif';
-    const config = { htmlLabels: false, flowchart: { htmlLabels: false }, fontFamily, themeVariables: { fontFamily } };
+    const config = { theme: 'default', htmlLabels: false, flowchart: { htmlLabels: false }, fontFamily, themeVariables: { fontFamily } };
     const source = `${diagram.dataset.mermaidSource}\n%%{init: ${JSON.stringify(config)}}%%`;
     const host = document.createElement('div');
     host.style.fontFamily = config.fontFamily;

@@ -25,6 +25,7 @@ export const exportToPdf = async ({ element, filename = 'document', paperSize = 
   metricsStyle.textContent = 'body > div[style*="visibility: hidden"][style*="white-space: nowrap"] > img { display: inline-block !important; }';
   stage.append(metricsStyle);
   const content = element.cloneNode(true);
+  content.classList.remove('dark', 'dark:bg-dark-900');
   content.classList.add('pdf-export-root');
   content.style.width = `${widthPx}px`;
   content.style.fontFamily = selectedFont || getComputedStyle(element).fontFamily;
@@ -70,6 +71,9 @@ export const exportToPdf = async ({ element, filename = 'document', paperSize = 
         height: page.end - page.start,
         y: page.start,
         onclone: (_document, clonedContent) => {
+          _document.documentElement.classList.remove('dark');
+          _document.body.classList.remove('dark');
+          clonedContent.classList.remove('dark', 'dark:bg-dark-900');
           // Move the offscreen export stage into the capture viewport only.
           clonedContent.parentElement.style.left = '0';
         },
