@@ -1,50 +1,75 @@
-import React from 'react';
-import { X, Code2 } from 'lucide-react';
+import { X } from 'lucide-react';
+import { btn } from './ui/styles';
+
+const SNIPPETS = [
+  { label: 'Serif headings', css: ".markdown-preview h1, .markdown-preview h2 { font-family: 'Playfair Display', serif; }" },
+  { label: 'Justify text', css: '.markdown-preview p { text-align: justify; }' },
+  { label: 'Larger text', css: '.markdown-preview { font-size: 17px; line-height: 1.8; }' },
+  { label: 'No H2 rule', css: '.markdown-preview h2 { border-bottom: none; }' },
+  { label: 'Striped tables', css: '.markdown-preview tr:nth-child(even) td { background: rgba(127, 127, 127, 0.08); }' },
+];
 
 export default function CustomCssPanel({ isOpen, onClose, css, onCssChange }) {
   if (!isOpen) return null;
 
+  const add = (snippet) => onCssChange(css.trim() ? `${css.trimEnd()}\n${snippet}\n` : `${snippet}\n`);
+
+  const onKeyDown = (e) => {
+    if (e.key === 'Escape') onClose();
+    // Tab inserts indentation instead of leaving the field.
+    if (e.key === 'Tab' && !e.shiftKey) {
+      e.preventDefault();
+      const el = e.currentTarget;
+      const { selectionStart: s, selectionEnd: end } = el;
+      onCssChange(css.slice(0, s) + '  ' + css.slice(end));
+      requestAnimationFrame(() => el.setSelectionRange(s + 2, s + 2));
+    }
+  };
+
   return (
-    <div className="fixed top-16 right-0 bottom-10 w-full sm:w-[400px] bg-white dark:bg-dark-800 border-l border-gray-200 dark:border-gray-700 shadow-2xl z-40 animate-in slide-in-from-right duration-300">
-      <div className="h-full flex flex-col">
-        <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-dark-900/50">
-          <div className="flex items-center gap-2">
-            <Code2 className="text-blue-500" size={20} />
-            <span className="font-semibold text-gray-800 dark:text-gray-100">Custom CSS — Preview Override</span>
-          </div>
-          <button 
-            onClick={onClose}
-            className="p-1 hover:bg-gray-200 dark:hover:bg-dark-700 rounded-full transition-colors text-gray-500 dark:text-gray-400"
-          >
-            <X size={20} />
-          </button>
+    <aside
+      aria-label="Custom CSS"
+      className="fixed inset-y-0 right-0 z-40 flex w-full flex-col border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-800 shadow-xl sm:w-[380px] modal-panel"
+    >
+      <div className="flex items-start justify-between gap-3 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
+        <div>
+          <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Custom CSS</h2>
+          <p className="text-xs text-gray-500 dark:text-gray-400">Applies to this document's preview and PDF only.</p>
         </div>
-
-        <div className="flex-1 p-4 flex flex-col gap-4 overflow-hidden">
-          <div className="text-xs text-info-600 dark:text-info-400 bg-info-50/50 dark:bg-info-900/10 p-3 rounded-lg border border-info-100/50 dark:border-info-900/20">
-            Apply CSS to preview elements. Example:
-            <code className="block mt-2 font-mono opacity-80">
-              h1 {'{'} color: #3b82f6; {'}'}<br/>
-              blockquote {'{'} border-left: 4px solid #10b981; {'}'}
-            </code>
-          </div>
-          
-          <div className="flex-1 min-h-0">
-            <textarea
-              className="w-full h-full p-4 font-mono text-sm bg-gray-50 dark:bg-dark-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all dark:text-gray-300 resize-none"
-              placeholder="/* Add your styles here */"
-              value={css}
-              onChange={(e) => onCssChange(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div className="p-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-dark-900/50">
-          <p className="text-xs text-gray-500 dark:text-gray-400 text-center italic">
-            Changes are applied in real-time to the preview panel.
-          </p>
-        </div>
+        <button onClick={onClose} className={`${btn.icon} -mr-1`} aria-label="Close custom CSS">
+          <X size={18} />
+        </button>
       </div>
-    </div>
+
+      <div className="flex flex-wrap gap-1.5 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
+        {SNIPPETS.map((s) => (
+          <button
+            key={s.label}
+            onClick={() => add(s.css)}
+            title={s.css}
+            className="rounded-md border border-gray-200 dark:border-gray-600 px-2 py-1 text-xs text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-400"
+          >
+            + {s.label}
+          </button>
+        ))}
+      </div>
+
+      <textarea
+        autoFocus
+        spellCheck={false}
+        className="min-h-0 flex-1 resize-none bg-gray-50 dark:bg-dark-900 p-4 font-mono text-[13px] leading-6 text-gray-800 dark:text-gray-200 outline-none"
+        placeholder={'.markdown-preview h1 {\n  color: #1e3a8a;\n}'}
+        value={css}
+        onChange={(e) => onCssChange(e.target.value)}
+        onKeyDown={onKeyDown}
+      />
+
+      <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 px-4 py-2.5">
+        <span className="text-xs text-gray-500 dark:text-gray-400">Scope rules with <code className="font-mono">.markdown-preview</code></span>
+        <button onClick={() => onCssChange('')} disabled={!css} className="text-xs font-medium text-gray-600 hover:text-red-600 disabled:opacity-40 dark:text-gray-400">
+          Clear
+        </button>
+      </div>
+    </aside>
   );
 }

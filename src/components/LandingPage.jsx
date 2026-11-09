@@ -1,193 +1,143 @@
-import React from 'react';
-import { Sparkles, ArrowRight, Eye, BookOpen, FileCode, PenTool, CheckCircle, ShieldCheck } from 'lucide-react';
+import { useEffect } from 'react';
+import { ArrowRight, Moon, Sun } from 'lucide-react';
+import Preview from './Preview';
+import { btn } from './ui/styles';
+import { templates } from '../data/templates';
 import { analytics } from '../utils/analytics';
 
-export default function LandingPage({ onStartWriting, onViewExample }) {
-  React.useEffect(() => {
+const SAMPLE = `## Q3 support review
+
+Median first response fell from **4.2 h** to **1.6 h** after the triage rota changed.
+
+| Channel | Tickets | Median reply |
+| :--- | ---: | ---: |
+| Email | 1,284 | 1.9 h |
+| Chat | 2,031 | 0.4 h |
+
+Backlog growth stays below $r = \\frac{\\text{opened}}{\\text{closed}} < 1$.
+
+- [x] Move triage to a rota
+- [ ] Publish macros for refunds`;
+
+const FEATURES = [
+  ['Tables', 'GitHub-style tables, plus a size picker for new ones.'],
+  ['Math', 'LaTeX through KaTeX: inline $…$ or display $$…$$.'],
+  ['Diagrams', 'Mermaid flowcharts, sequence diagrams and Gantt charts from code blocks.'],
+  ['Code', 'Syntax highlighting in the preview and the PDF.'],
+  ['Images', 'Paste or drop an image into the editor; it is embedded in the document.'],
+  ['PDF', 'A4, Letter or A3, three margin sizes, optional cover page. Links stay clickable.'],
+  ['Files', 'Several documents with tabs. Open and download plain .md files.'],
+  ['Styling', 'Six fonts and per-document custom CSS that carries into the PDF.'],
+];
+
+export default function LandingPage({ onStartWriting, onViewExample, onStartTemplate, isDark, onToggleDark }) {
+  useEffect(() => {
     analytics.track('Landing Page Visited');
   }, []);
 
-  const handleStart = () => {
+  const start = () => {
     analytics.track('Start Writing Clicked', { source: 'landing_hero_primary' });
     onStartWriting();
   };
 
-  const handleExample = () => {
-    analytics.track('View Example Clicked', { source: 'landing_hero_secondary' });
-    onViewExample();
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-dark-900 text-gray-900 dark:text-gray-100 flex flex-col font-sans transition-colors">
-      {/* Top Navigation */}
-      <header className="w-full border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-dark-800/80 backdrop-blur sticky top-0 z-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src="/icon.svg" alt="Cak MaD Logo" className="w-9 h-9 rounded-lg shadow-sm" />
-            <span className="text-lg font-bold tracking-tight text-gray-900 dark:text-gray-100">Cak MaD</span>
+    <div className="min-h-screen bg-gray-50 dark:bg-dark-900 text-gray-900 dark:text-gray-100">
+      <header className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-dark-800">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
+          <div className="flex items-center gap-2.5">
+            <img src="/icon.svg" alt="" className="h-7 w-7 rounded-md" />
+            <span className="font-semibold tracking-tight">Cak MaD</span>
           </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleStart}
-              className="px-4 py-2 text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 rounded-lg shadow-sm transition"
-            >
-              Start Writing
+          <div className="flex items-center gap-1">
+            <button onClick={onToggleDark} className={btn.icon} aria-label={isDark ? 'Use light theme' : 'Use dark theme'}>
+              {isDark ? <Sun size={18} /> : <Moon size={18} />}
             </button>
+            <button onClick={start} className={btn.ghost}>Open editor</button>
           </div>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <main className="flex-1">
-        <section className="py-16 sm:py-24 px-4 sm:px-6 max-w-4xl mx-auto text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800/60 text-brand-700 dark:text-brand-300 text-xs font-semibold mb-6">
-            <Sparkles size={14} className="text-brand-500" />
-            From Raw AI Prompts to Publication Ready
-          </div>
-
-          {/* Hero Title */}
-          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-gray-900 dark:text-gray-50 leading-[1.15]">
-            Edit and export Markdown beautifully
-          </h1>
-
-          {/* Subtitle */}
-          <p className="mt-5 text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            Turn AI-generated Markdown into clean, professional documents instantly.
-          </p>
-
-          {/* CTA Group */}
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3.5">
-            <button
-              onClick={handleStart}
-              className="w-full sm:w-auto px-7 py-3.5 bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white font-semibold rounded-xl shadow-md shadow-brand-500/20 transition flex items-center justify-center gap-2 text-base"
-            >
-              Start Writing
-              <ArrowRight size={18} />
-            </button>
-            <button
-              onClick={handleExample}
-              className="w-full sm:w-auto px-6 py-3.5 bg-white dark:bg-dark-800 hover:bg-gray-100 dark:hover:bg-dark-700 border border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-200 font-semibold rounded-xl transition flex items-center justify-center gap-2 text-base"
-            >
-              <Eye size={18} />
-              View Example
-            </button>
-          </div>
-
-          {/* Trust Highlights */}
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-xs text-gray-500 dark:text-gray-400">
-            <span className="flex items-center gap-1.5">
-              <CheckCircle size={15} className="text-brand-500" /> Instant PDF Export
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle size={15} className="text-brand-500" /> Beautiful Typography Presets
-            </span>
-            <span className="flex items-center gap-1.5">
-              <ShieldCheck size={15} className="text-brand-500" /> 100% Client-Side Privacy
-            </span>
-          </div>
-        </section>
-
-        {/* Workflow Diagram Banner */}
-        <section className="py-8 px-4 max-w-4xl mx-auto">
-          <div className="p-6 rounded-2xl bg-gradient-to-r from-brand-50/60 via-amber-50/40 to-orange-50/60 dark:from-dark-800 dark:via-dark-800 dark:to-dark-800 border border-brand-200/80 dark:border-gray-700/60">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center items-center">
-              <div className="space-y-1">
-                <span className="text-xs uppercase font-bold tracking-wider text-brand-600 dark:text-brand-400">Step 1</span>
-                <h4 className="text-sm font-bold text-gray-800 dark:text-gray-200">AI Output</h4>
-                <p className="text-xs text-gray-500">Copy output from ChatGPT, Claude, or Gemini</p>
-              </div>
-
-              <div className="space-y-1 md:border-x md:border-gray-200 dark:md:border-gray-700 px-4">
-                <span className="text-xs uppercase font-bold tracking-wider text-brand-600 dark:text-brand-400">Step 2</span>
-                <h4 className="text-sm font-bold text-gray-800 dark:text-gray-200">Cak MaD Polish</h4>
-                <p className="text-xs text-gray-500">Edit, structure tables, math equations, and fonts</p>
-              </div>
-
-              <div className="space-y-1">
-                <span className="text-xs uppercase font-bold tracking-wider text-brand-600 dark:text-brand-400">Step 3</span>
-                <h4 className="text-sm font-bold text-gray-800 dark:text-gray-200">Beautiful Document</h4>
-                <p className="text-xs text-gray-500">Print or export to PDF ready for clients or teams</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Use Case Cards Section */}
-        <section className="py-16 px-4 sm:px-6 max-w-5xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
-              Designed for your daily publishing workflows
-            </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-              Solve the gap between raw text output and presentation-ready deliverables.
+      <main>
+        <section className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[5fr_7fr] lg:py-20">
+          <div>
+            <h1 className="text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl">
+              Paste Markdown.<br />Get a clean PDF.
+            </h1>
+            <p className="mt-5 max-w-md text-lg leading-relaxed text-gray-600 dark:text-gray-300">
+              A Markdown editor that runs in your browser. Paste output from ChatGPT, Claude or Gemini, tidy it with a live preview, and export it as a PDF.
             </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <button onClick={start} className={`${btn.primary} px-5 py-2.5 text-base`}>
+                Open the editor <ArrowRight size={18} />
+              </button>
+              <button
+                onClick={() => { analytics.track('View Example Clicked', { source: 'landing_hero_secondary' }); onViewExample(); }}
+                className={`${btn.secondary} px-5 py-2.5 text-base`}
+              >
+                Try a sample report
+              </button>
+            </div>
+            <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">Free, no account. Documents are kept in your browser and never uploaded.</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {/* 1. AI Reports */}
-            <div className="p-6 rounded-2xl bg-white dark:bg-dark-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:border-brand-400 dark:hover:border-brand-500 transition-all flex flex-col justify-between">
-              <div>
-                <div className="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-400 flex items-center justify-center mb-4">
-                  <Sparkles size={20} />
-                </div>
-                <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">AI Reports</h3>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 leading-relaxed">
-                  Generate content with AI → polish and export as an executive summary.
-                </p>
-              </div>
-              <span className="mt-4 text-[11px] font-semibold text-brand-600 dark:text-brand-400">Executive Briefs →</span>
+          {/* The real renderer on a real sample, not a screenshot. */}
+          <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-800 shadow-sm" aria-label="Example: Markdown source and the rendered result">
+            <div className="flex border-b border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-400">
+              <span className="flex-1 border-r border-gray-200 dark:border-gray-700 px-4 py-2">report.md</span>
+              <span className="flex-1 px-4 py-2">Preview</span>
             </div>
-
-            {/* 2. Research Documents */}
-            <div className="p-6 rounded-2xl bg-white dark:bg-dark-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:border-brand-400 dark:hover:border-brand-500 transition-all flex flex-col justify-between">
-              <div>
-                <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4">
-                  <BookOpen size={20} />
-                </div>
-                <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">Research Documents</h3>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 leading-relaxed">
-                  Convert structured Markdown into readable documents with math & tables.
-                </p>
+            <div className="grid sm:grid-cols-2">
+              <pre className="hidden overflow-hidden border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-dark-900 p-4 font-mono text-[11.5px] leading-5 text-gray-600 dark:text-gray-400 sm:block whitespace-pre-wrap">{SAMPLE}</pre>
+              <div className="p-5 [&_.markdown-preview]:text-[13px] [&_.markdown-preview]:leading-6 [&_.markdown-preview_h2]:mt-0 [&_.markdown-preview_h2]:text-lg">
+                <Preview content={SAMPLE} selectedFont="sans-serif" />
               </div>
-              <span className="mt-4 text-[11px] font-semibold text-amber-600 dark:text-amber-400">Academic Papers →</span>
-            </div>
-
-            {/* 3. Documentation */}
-            <div className="p-6 rounded-2xl bg-white dark:bg-dark-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:border-brand-400 dark:hover:border-brand-500 transition-all flex flex-col justify-between">
-              <div>
-                <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 flex items-center justify-center mb-4">
-                  <FileCode size={20} />
-                </div>
-                <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">Documentation</h3>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 leading-relaxed">
-                  Create clean technical documentation with diagrams and syntax highlighting.
-                </p>
-              </div>
-              <span className="mt-4 text-[11px] font-semibold text-orange-600 dark:text-orange-400">Technical Specs →</span>
-            </div>
-
-            {/* 4. Personal Notes */}
-            <div className="p-6 rounded-2xl bg-white dark:bg-dark-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:border-brand-400 dark:hover:border-brand-500 transition-all flex flex-col justify-between">
-              <div>
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4">
-                  <PenTool size={20} />
-                </div>
-                <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">Personal Notes</h3>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 leading-relaxed">
-                  Organize meeting notes, daily journals, and articles with better readability.
-                </p>
-              </div>
-              <span className="mt-4 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">Daily Notes →</span>
             </div>
           </div>
+        </section>
+
+        <section className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-dark-800">
+          <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+            <h2 className="text-2xl font-semibold tracking-tight">What it handles</h2>
+            <dl className="mt-8 grid gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+              {FEATURES.map(([term, desc]) => (
+                <div key={term}>
+                  <dt className="text-sm font-semibold">{term}</dt>
+                  <dd className="mt-1 text-sm leading-relaxed text-gray-600 dark:text-gray-400">{desc}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+          <h2 className="text-2xl font-semibold tracking-tight">Start from a template</h2>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Opens in the editor with placeholder text in [brackets].</p>
+          <ul className="mt-6 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {templates.map((t) => (
+              <li key={t.id}>
+                <button
+                  onClick={() => onStartTemplate(t)}
+                  className="group flex h-full w-full items-start justify-between gap-3 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-800 px-4 py-3 text-left transition-colors hover:border-gray-400 dark:hover:border-gray-500"
+                >
+                  <span>
+                    <span className="block text-sm font-medium">{t.label}</span>
+                    <span className="mt-0.5 block text-xs text-gray-500 dark:text-gray-400">{t.description}</span>
+                  </span>
+                  <ArrowRight size={16} className="mt-0.5 shrink-0 text-gray-400 transition-transform group-hover:translate-x-0.5 group-hover:text-gray-700 dark:group-hover:text-gray-200" />
+                </button>
+              </li>
+            ))}
+          </ul>
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="py-6 border-t border-gray-200 dark:border-gray-800 text-center text-xs text-gray-500 dark:text-gray-400">
-        <p>Cak MaD • Edit and export Markdown beautifully</p>
+      <footer className="border-t border-gray-200 dark:border-gray-800">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-6 text-sm text-gray-500 dark:text-gray-400 sm:px-6">
+          <span>Cak MaD</span>
+          <a href="https://saweria.co/januarsyah" target="_blank" rel="noopener noreferrer" className="hover:text-gray-900 dark:hover:text-gray-100">
+            Support the project on Saweria
+          </a>
+        </div>
       </footer>
     </div>
   );

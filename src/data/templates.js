@@ -1,224 +1,333 @@
 export const TEMPLATE_CATEGORIES = [
-  { id: 'all', label: 'All Templates' },
+  { id: 'all', label: 'All' },
+  { id: 'professional', label: 'Work' },
   { id: 'academic', label: 'Academic' },
-  { id: 'documentation', label: 'Documentation' },
-  { id: 'professional', label: 'Professional' },
-  { id: 'personal', label: 'Personal' }
+  { id: 'documentation', label: 'Docs' },
+  { id: 'personal', label: 'Personal' },
 ];
+
+const today = () => new Date().toISOString().slice(0, 10);
 
 export const templates = [
   {
     id: 'ai-report',
     category: 'professional',
-    label: 'AI Executive Report',
-    description: 'Turn AI-generated summaries into executive-ready briefs with key findings and charts',
-    badge: 'Popular',
-    content: `# 📊 Executive Analysis & Summary Report
+    label: 'Report',
+    description: 'Summary, findings table, recommendations. Good for cleaning up AI output.',
+    get content() {
+      return `# [Report title]
 
-> Prepared with AI assistance • Reviewed & Formatted via Cak MaD
-> **Date:** 2026-10-10 | **Status:** Final Review
+**Prepared by:** [Name]
+**Date:** ${today()}
 
----
+## Summary
 
-## 🎯 Executive Summary
-Provide a concise 2-3 sentence distillation of key conclusions and strategic decisions.
+[Two or three sentences: what was looked at, what was found, what should happen next.]
 
-- **Primary Breakthrough:** 42% operational efficiency gain achieved in Q3.
-- **Key Risk Identified:** Supply chain turnaround latency requiring local caching.
-- **Recommended Action:** Allocate expansion resources to automated pipeline infrastructure.
+## Findings
 
----
-
-## 📈 Key Metrics & Quantitative Findings
-
-| Indicator | Benchmark | Actual Result | Delta (%) |
+| Area | Expected | Observed | Note |
 | :--- | :--- | :--- | :--- |
-| **Throughput** | 1,200 req/s | 1,740 req/s | +45.0% |
-| **P99 Latency** | < 120 ms | 68 ms | -43.3% |
-| **Error Rate** | < 0.05% | 0.01% | -80.0% |
+| [Area 1] | [Value] | [Value] | [Short note] |
+| [Area 2] | [Value] | [Value] | [Short note] |
 
----
+### [Finding 1]
 
-## 🔍 Detailed Strategic Analysis
+[Explain the finding and the evidence behind it.]
 
-### 1. Market Opportunity
-Raw AI output often delivers dense unstructured paragraphs. Structuring into subsections ensures clarity across multi-department stakeholders.
+### [Finding 2]
 
-### 2. Implementation Roadmap
-\`\`\`mermaid
-graph LR
-    A[Raw AI Prompt] --> B[Cak MaD Polish]
-    B --> C[Visual Preview]
-    C --> D[PDF Export]
-\`\`\`
+[Explain the finding and the evidence behind it.]
 
----
+## Recommendations
 
-## 💡 Next Steps & Action Items
-- [ ] Present findings at board sync.
-- [ ] Establish automated tracking hooks.
-`
+1. [Action, owner, deadline]
+2. [Action, owner, deadline]
+
+## Next steps
+
+- [ ] [Task]
+- [ ] [Task]
+`;
+    },
+  },
+  {
+    id: 'proposal',
+    category: 'professional',
+    label: 'Proposal',
+    description: 'Problem, proposed approach, timeline and budget.',
+    get content() {
+      return `# [Proposal title]
+
+**To:** [Recipient]
+**From:** [Name]
+**Date:** ${today()}
+
+## Problem
+
+[What is wrong today and who it affects.]
+
+## Proposed approach
+
+[What you want to do and why this approach.]
+
+## Timeline
+
+| Phase | Work | Duration |
+| :--- | :--- | ---: |
+| 1 | [Work] | [2 weeks] |
+| 2 | [Work] | [3 weeks] |
+
+## Budget
+
+| Item | Cost |
+| :--- | ---: |
+| [Item] | [Amount] |
+| **Total** | **[Amount]** |
+
+## Decision needed
+
+[What you need from the reader, and by when.]
+`;
+    },
   },
   {
     id: 'research-doc',
     category: 'academic',
-    label: 'Academic Research Document',
-    description: 'Structured layout for papers, literature reviews, and research methodologies',
-    badge: 'Academic',
-    content: `# 🔬 Research Paper: Methodological Synthesis
+    label: 'Research paper',
+    description: 'Abstract, sections, equations and references.',
+    content: `# [Paper title]
 
-**Author:** Academic Researcher  
-**Affiliation:** Faculty of Computing & Informatics  
-**Contact:** researcher@example.ac.id  
+**Author:** [Name], [Affiliation]
+**Contact:** [email]
 
----
+## Abstract
 
-### Abstract
-This document outlines the core methodology and theoretical foundations of the investigative study. Formatted cleanly with proper citations, equations, and structured theorems.
+[150–250 words: question, method, main result, implication.]
 
-**Keywords:** Neural Networks, Distributed Systems, Markdown Tooling
-
----
+**Keywords:** [keyword], [keyword], [keyword]
 
 ## 1. Introduction
-Modern research workflows leverage large language models to draft extensive bibliographies and literature reviews. The challenge lies in formatting mathematical representations and standard citations.
 
-## 2. Theoretical Framework
-Let the objective loss function $\\mathcal{L}(\\theta)$ over distribution $\\mathcal{D}$ be represented as:
+[Context and research question.]
+
+## 2. Method
+
+[Data, setup and procedure.] Equations render with KaTeX, for example inline $\\hat{y} = \\sigma(Wx + b)$ or as a block:
 
 $$
-\\mathcal{L}(\\theta) = \\mathbb{E}_{(x, y) \\sim \\mathcal{D}} \\left[ -\\sum_{k=1}^K y_k \\log \\hat{y}_k(x; \\theta) \\right]
+\\mathcal{L}(\\theta) = -\\frac{1}{N} \\sum_{i=1}^{N} y_i \\log \\hat{y}_i
 $$
 
-Where:
-- $\\theta$ denotes model parameters.
-- $K$ is the total class cardinality.
+## 3. Results
 
----
+| Condition | Mean | SD |
+| :--- | ---: | ---: |
+| [A] | [0.00] | [0.00] |
+| [B] | [0.00] | [0.00] |
 
-## 3. Results & Discussion
-Document your observations here. Markdown tables and callout quotes enhance reading comprehension for peer review.
-`
+## 4. Discussion
+
+[What the results mean and their limits.]
+
+## References
+
+1. [Author, A. (Year). *Title*. Publisher.]
+`,
+  },
+  {
+    id: 'essay',
+    category: 'academic',
+    label: 'Essay',
+    description: 'Title, thesis, body sections and conclusion.',
+    content: `# [Essay title]
+
+*[Name] · [Course] · [Date]*
+
+[Opening paragraph that ends with your thesis.]
+
+## [First argument]
+
+[Claim, evidence, explanation.]
+
+## [Second argument]
+
+[Claim, evidence, explanation.]
+
+## [Counter-argument]
+
+[Strongest objection and your response.]
+
+## Conclusion
+
+[Restate the thesis in light of the arguments, and say why it matters.]
+`,
   },
   {
     id: 'readme',
     category: 'documentation',
-    label: 'Project Documentation (README)',
-    description: 'Clean technical documentation for software projects and developer repositories',
-    badge: 'Technical',
-    content: `# 🚀 Project Documentation
+    label: 'README',
+    description: 'Project overview, install, usage and a Mermaid diagram.',
+    content: `# [project-name]
 
-> Clean, maintainable documentation built for developers.
+[One sentence on what this project does.]
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)](#)
+## Install
 
----
+\`\`\`bash
+npm install [project-name]
+\`\`\`
 
-## 📑 Architecture Overview
+## Usage
+
+\`\`\`js
+import { thing } from '[project-name]';
+
+thing({ option: true });
+\`\`\`
+
+## How it works
 
 \`\`\`mermaid
-graph TD
-    User-->|Markdown In| Editor[Cak MaD Studio]
-    Editor-->Preview[Live Preview]
-    Preview-->PDF[Clean PDF Export]
+graph LR
+    Input --> Parse --> Transform --> Output
 \`\`\`
 
-## 🛠 Features
-- ⚡️ **Zero Latency:** Instant dual-pane markdown rendering.
-- 🎨 **Typography Engine:** Multi-font presets designed for reading comfort.
-- 🔒 **Local Privacy:** No content leaves the client browser.
+## Configuration
 
-## 💻 Quick Start
-\`\`\`bash
-# Clone the repository
-git clone https://github.com/example/project.git
+| Option | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| \`option\` | \`boolean\` | \`false\` | [What it does] |
 
-# Install dependencies
-npm install
+## License
 
-# Start development server
-npm run dev
-\`\`\`
-`
-  },
-  {
-    id: 'meeting',
-    category: 'personal',
-    label: 'Meeting & Personal Notes',
-    description: 'Organized meeting minutes, personal journal, and daily priorities',
-    badge: 'Notes',
-    content: `# 📝 Meeting Minutes & Daily Journal
-
-**Date:** 2026-10-10  
-**Participants:** Team Leads & Product Designers  
-**Focus:** Phase 1 Product Validation & Rollout  
-
----
-
-## 📌 Main Discussion Topics
-1. **Product Positioning:** Shift from code editor to beautiful document exporter.
-2. **Onboarding Flow:** Ensure first-time visitors understand the value in < 10 seconds.
-3. **Empty Canvas Mitigation:** Provide starter templates instead of blank screen.
-
-## ✅ Priority Action Items
-- [ ] Review mobile responsive touch targets.
-- [ ] Audit PDF page-break CSS properties.
-- [ ] Confirm local storage privacy standards.
-
----
-
-> "Simplicity is prerequisite for reliability." — Edsger W. Dijkstra
-`
+[MIT]
+`,
   },
   {
     id: 'api-spec',
     category: 'documentation',
-    label: 'API Specification Reference',
-    description: 'Standard REST / GraphQL endpoint reference and schema definition',
-    badge: 'Specs',
-    content: `# 📡 API Reference Specification
+    label: 'API reference',
+    description: 'Endpoint, headers, request and response examples.',
+    content: `# [Service] API
 
-### \`POST /api/v1/documents\`
-Creates a new document entity.
+## \`POST /v1/[resource]\`
 
-**Request Headers:**
-| Header | Value | Description |
-| :--- | :--- | :--- |
-| \`Content-Type\` | \`application/json\` | Payload encoding |
-| \`Authorization\` | \`Bearer <token>\` | User authentication token |
+[What this endpoint does.]
 
-**Request Body (JSON):**
+### Headers
+
+| Header | Value |
+| :--- | :--- |
+| \`Content-Type\` | \`application/json\` |
+| \`Authorization\` | \`Bearer <token>\` |
+
+### Request
+
 \`\`\`json
 {
-  "title": "Quarterly Financial Analysis",
-  "content": "# Markdown content...",
-  "settings": {
-    "font": "poppins",
-    "paperSize": "a4"
-  }
+  "name": "example"
 }
 \`\`\`
 
-**Response (201 Created):**
+### Response \`201\`
+
 \`\`\`json
 {
-  "id": "doc-8391-uuid",
-  "status": "success",
-  "createdAt": 1775836800000
+  "id": "abc123",
+  "name": "example"
 }
 \`\`\`
-`
+
+### Errors
+
+| Status | Meaning |
+| :--- | :--- |
+| \`400\` | [Invalid body] |
+| \`401\` | [Missing or bad token] |
+`,
   },
   {
-    id: 'blank',
-    category: 'personal',
-    label: 'Blank Document',
-    description: 'Start fresh with a clean, distraction-free markdown canvas',
-    badge: 'Blank',
-    content: `# Untitled Document
+    id: 'release-notes',
+    category: 'documentation',
+    label: 'Release notes',
+    description: 'Added, changed and fixed, per version.',
+    get content() {
+      return `# [Product] [version]
 
-Start writing your thoughts here...
-`
-  }
+*Released ${today()}*
+
+## Added
+
+- [New feature and why it is useful]
+
+## Changed
+
+- [Behaviour that is different now]
+
+## Fixed
+
+- [Bug that no longer happens]
+
+## Upgrade notes
+
+[Anything the reader must do before or after upgrading.]
+`;
+    },
+  },
+  {
+    id: 'meeting',
+    category: 'personal',
+    label: 'Meeting notes',
+    description: 'Attendees, agenda, decisions and action items.',
+    get content() {
+      return `# [Meeting name]
+
+**Date:** ${today()}
+**Attendees:** [Names]
+
+## Agenda
+
+1. [Topic]
+2. [Topic]
+
+## Notes
+
+[What was discussed.]
+
+## Decisions
+
+- [Decision]
+
+## Action items
+
+- [ ] [Task] — [Owner], [due date]
+- [ ] [Task] — [Owner], [due date]
+`;
+    },
+  },
+  {
+    id: 'journal',
+    category: 'personal',
+    label: 'Daily notes',
+    description: 'Priorities, log and a short review.',
+    get content() {
+      return `# ${today()}
+
+## Top three
+
+- [ ] [Priority]
+- [ ] [Priority]
+- [ ] [Priority]
+
+## Log
+
+[Notes through the day.]
+
+## Review
+
+[What went well, what to change tomorrow.]
+`;
+    },
+  },
 ];

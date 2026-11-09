@@ -1,38 +1,23 @@
-import React from 'react';
-import { Type } from 'lucide-react';
-
-const FONTS = [
-  { id: 'sans-serif', label: 'System Default' },
-  { id: "'Times New Roman', Times, serif", label: 'Times New Roman' },
-  { id: "'Poppins', sans-serif", label: 'Poppins' },
-  { id: "'Playfair Display', serif", label: 'Playfair Display' },
-  { id: "'Lora', serif", label: 'Lora' },
-  { id: "'Fira Code', monospace", label: 'Fira Code' },
-];
+import { ChevronDown } from 'lucide-react';
+import { FONTS } from '../data/fonts';
 
 export default function FontSelector({ selectedFont, onSelect }) {
   return (
-    <div className="flex items-center gap-2 px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-dark-800 transition-colors">
-      <Type size={16} className="text-gray-500 dark:text-gray-400" />
+    <label className="relative flex items-center" title="Preview and PDF font">
+      <span className="sr-only">Document font</span>
       <select
         value={selectedFont}
         onChange={(e) => onSelect(e.target.value)}
-        className="appearance-none bg-transparent text-sm font-medium outline-none text-gray-700 dark:text-gray-300 pr-4 cursor-pointer"
-        style={{
-          fontFamily: selectedFont === 'sans-serif' ? 'inherit' : selectedFont,
-        }}
+        className="appearance-none cursor-pointer rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark-900 py-1 pl-2.5 pr-7 text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500"
+        style={{ fontFamily: selectedFont === 'sans-serif' ? 'inherit' : selectedFont }}
       >
         {FONTS.map((font) => (
-          <option 
-            key={font.id} 
-            value={font.id}
-            className="text-gray-900 dark:text-white dark:bg-dark-800"
-            style={{ fontFamily: font.id }}
-          >
+          <option key={font.id} value={font.id} style={{ fontFamily: font.id }}>
             {font.label}
           </option>
         ))}
       </select>
-    </div>
+      <ChevronDown size={14} className="pointer-events-none absolute right-2 text-gray-500" />
+    </label>
   );
 }

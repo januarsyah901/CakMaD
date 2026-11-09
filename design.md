@@ -5,7 +5,7 @@
 
 Source measurements are normalized to Tailwind CSS rem scales; tokens and component rules reflect Phase 1 product evolution from a raw technical editor into an intuitive document publishing product.
 
-Cak MaD operates on a clean slate studio philosophy. Instead of facing a blank, intimidating code terminal, users are greeted with high-clarity typography, deliberate breathing room, soft borders, and purposeful accent moments. The visual tone is utilitarian yet refined: slate neutral surfaces, crisp borders, rounded 8px to 16px geometry for cards and modals, and a vibrant indigo brand core (#4f46e5) that signals action, export readiness, and document craft. The layout transitions seamlessly between a welcoming product landing layer, a guided empty document state, a focused dual-pane editing workshop, and a crystal-clear export preview modal.
+Cak MaD operates on a clean slate studio philosophy. Instead of facing a blank, intimidating code terminal, users are greeted with high-clarity typography, deliberate breathing room, soft borders, and purposeful accent moments. The visual tone is utilitarian yet refined: slate neutral surfaces, crisp borders, rounded 8px to 16px geometry for cards and modals, and an amber brand core (#ff9d00) that signals action, export readiness, and document craft. The layout transitions seamlessly between a welcoming product landing layer, a guided empty document state, a focused dual-pane editing workshop, and a crystal-clear export preview modal.
 
 ## Tokens — Colors
 
@@ -103,7 +103,7 @@ Preview documents support selectable typography to fit various publishing styles
 - **Title:** "Edit and export Markdown beautifully" in 44px/48px bold, tight tracking.
 - **Subtitle:** "Turn AI-generated Markdown into clean, professional documents instantly" in 18px text-gray-600.
 - **Action Group:**
-  - Primary button: Indigo pill/rounded button (`bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 font-semibold rounded-lg shadow-sm`). Label: "Start Writing".
+  - Primary button: Amber pill/rounded button (`bg-brand-500 hover:bg-brand-600 text-gray-950 px-6 py-3 font-semibold rounded-lg shadow-sm`). Label: "Start Writing".
   - Secondary button: Subtle border pill (`border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-dark-700 px-6 py-3 font-medium rounded-lg`). Label: "View Example".
 
 ### 2. Use Case Grid Cards
@@ -111,7 +111,7 @@ Preview documents support selectable typography to fit various publishing styles
 - **Grid:** 4 columns on desktop (`grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6`).
 - **Cards:** Surface white / dark-800, border-gray-200 / dark-700, 16px radius (`rounded-2xl`), 24px padding (`p-6`).
 - **Card Content:**
-  1. **AI Reports:** "Generate content with AI -> polish and export" (Icon: Sparkles / Bot).
+  1. **AI Reports:** "Generate content with AI -> polish and export" .
   2. **Research Documents:** "Convert structured Markdown into readable documents" (Icon: BookOpen / GraduationCap).
   3. **Documentation:** "Create clean technical documentation" (Icon: FileCode / Terminal).
   4. **Personal Notes:** "Organize notes with better readability" (Icon: Notebook / PenTool).
@@ -126,7 +126,7 @@ Preview documents support selectable typography to fit various publishing styles
   2. *Edit your content* (with instant live syntax styling).
   3. *Preview your document* (styled with typography presets).
   4. *Export* (one-click clean PDF or clean Markdown).
-- **CTA:** "Start Editing" button full width (`w-full bg-indigo-600 text-white py-2.5 rounded-lg`).
+- **CTA:** "Start Editing" button full width (`w-full bg-brand-600 text-white py-2.5 rounded-lg`).
 - **Persistence:** Tracked via `localStorage.getItem('cakmad_onboarded_v1')`.
 
 ### 4. Empty State Creation Guidance
@@ -157,7 +157,7 @@ Preview documents support selectable typography to fit various publishing styles
   - Paper size segment control (`A4`, `Letter`, `A3`).
   - Margins toggle (`Normal`, `Compact`, `Wide`).
   - Filename input with `.pdf` extension tag.
-- **Primary CTA:** "Download PDF" (`bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-medium shadow-sm`).
+- **Primary CTA:** "Download PDF" (`bg-brand-500 hover:bg-brand-600 text-gray-950 px-5 py-2.5 rounded-lg font-medium shadow-sm`).
 - **Confirmation State:** Animated checkmark toast: "Document is ready to share".
 
 ### 7. Responsive Mobile Navigation & Viewport
@@ -170,9 +170,9 @@ Preview documents support selectable typography to fit various publishing styles
 
 ### Do
 - Use 8px (`rounded-lg`) for primary interactive controls and 16px (`rounded-2xl`) for elevated cards and modals.
-- Reserve Brand Indigo (`#4f46e5`) for focal action triggers (Start Writing, Export, Primary Confirmation).
+- Reserve Brand Amber (`#ff9d00`, with near-black text for contrast) for focal action triggers (Start Writing, Export, Primary Confirmation).
 - Keep the light mode canvas slightly warm/cool neutral (`#f9fafb`) so the white document paper stands out with clear contrast.
-- Ensure all inputs and buttons provide clear visible focus rings (`focus:ring-2 focus:ring-indigo-500 focus:outline-none`).
+- Ensure all inputs and buttons provide clear visible focus rings (`focus:ring-2 focus:ring-brand-500 focus:outline-none`).
 - Provide instant feedback (loading spinners, checkmark icons) on every export and import action.
 
 ### Don't
@@ -210,9 +210,9 @@ Preview documents support selectable typography to fit various publishing styles
   --text-tertiary: #9ca3af;
 
   /* Brand Accents */
-  --brand-indigo: #4f46e5;
-  --brand-indigo-hover: #4338ca;
-  --brand-indigo-soft: #e0e7ff;
+  --brand: #ff9d00;
+  --brand-hover: #ea8c00;
+  --brand-soft: #fffbeb;
   --brand-blue: #2563eb;
   
   /* Radii */
@@ -231,7 +231,7 @@ Preview documents support selectable typography to fit various publishing styles
   --text-secondary: #9ca3af;
   --text-tertiary: #6b7280;
 
-  --brand-indigo-soft: rgba(79, 70, 229, 0.15);
+  --brand-soft: rgba(255, 157, 0, 0.15);
 }
 ```
 
@@ -239,16 +239,16 @@ Preview documents support selectable typography to fit various publishing styles
 
 1. **Hero Primary Button:**
    ```jsx
-   <button className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+   <button className="px-6 py-3 bg-brand-500 hover:bg-brand-600 text-gray-950 font-medium rounded-lg shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2">
      Start Writing
    </button>
    ```
 
 2. **Use Case Card:**
    ```jsx
-   <div className="p-6 bg-white dark:bg-dark-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:border-indigo-400 dark:hover:border-indigo-500 transition-all">
-     <div className="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-4">
-       <Sparkles size={20} />
+   <div className="p-6 bg-white dark:bg-dark-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:border-brand-400 dark:hover:border-brand-500 transition-all">
+     <div className="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 flex items-center justify-center mb-4">
+       <FileText size={20} />
      </div>
      <h4 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-1">AI Reports</h4>
      <p className="text-sm text-gray-600 dark:text-gray-400">Generate content with AI, then polish and export cleanly.</p>
@@ -257,8 +257,8 @@ Preview documents support selectable typography to fit various publishing styles
 
 3. **Empty State Guidance Card:**
    ```jsx
-   <button className="flex items-center gap-3 p-4 bg-white dark:bg-dark-800 border border-gray-200 dark:border-gray-700 hover:border-indigo-500 dark:hover:border-indigo-400 rounded-xl transition text-left">
-     <div className="p-2.5 rounded-lg bg-indigo-50 dark:bg-dark-700 text-indigo-600 dark:text-indigo-400">
+   <button className="flex items-center gap-3 p-4 bg-white dark:bg-dark-800 border border-gray-200 dark:border-gray-700 hover:border-brand-500 dark:hover:border-brand-400 rounded-xl transition text-left">
+     <div className="p-2.5 rounded-lg bg-brand-50 dark:bg-dark-700 text-brand-600 dark:text-brand-400">
        <FileText size={20} />
      </div>
      <div>
@@ -267,3 +267,17 @@ Preview documents support selectable typography to fit various publishing styles
      </div>
    </button>
    ```
+
+## Anti-slop rules
+
+These override anything above that conflicts with them. Shared button/input classes live in `src/components/ui/styles.js`; every dialog uses `src/components/ui/Modal.jsx`.
+
+- **One accent.** Amber marks the primary action and the active state, nothing else. No per-card rainbow icon tiles, no gradient banners, no glow shadows (`shadow-brand-500/20`).
+- **Primary buttons use dark text on amber** (`text-gray-950`). White on `#ff9d00` is about 2:1 contrast and fails WCAG.
+- **No decoration that says nothing.** No sparkle badges, no "100% privacy" checkmark rows, no emoji in headings, toasts or templates, no `→` text that isn't a link.
+- **Show the product, don't describe it.** The landing page renders a real sample through `Preview`, not a mock-up or adjectives.
+- **Copy states facts.** "Documents are kept in your browser and never uploaded", not "Premium", "Beautifully", "Instantly". Templates use `[bracketed]` placeholders, never invented statistics.
+- **One language per surface.** UI copy is English.
+- **Dialogs**: left-aligned title, plain message, actions bottom-right. Esc and backdrop click close them. Destructive actions use the red `btn.danger`.
+- **Never navigate the user away.** Support links are opt-in (`Support` in the status bar, shortcuts dialog, export success state); nothing auto-opens Saweria.
+- **Radius scale**: `rounded` for chips and kbd, `rounded-md` for controls and cards, `rounded-xl` for dialogs only.

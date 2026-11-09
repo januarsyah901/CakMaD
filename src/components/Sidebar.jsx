@@ -1,104 +1,111 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { Plus, Search, X } from 'lucide-react';
 import FileItem from './FileItem';
-import { PlusCircle, X } from 'lucide-react';
+import { btn } from './ui/styles';
 
-export default function Sidebar({ 
-  documents, activeDocId, onCreate, onOpen, onRename, onDelete, 
-  onReorder, isVisible, isMobile, onClose 
+export default function Sidebar({
+  documents, activeDocId, onCreate, onOpen, onRename, onDelete, onDuplicate,
+  onReorder, isVisible, isMobile, onClose,
 }) {
+  const [query, setQuery] = useState('');
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [dragOverIndex, setDragOverIndex] = useState(null);
 
   if (!isVisible) return null;
 
-  const handleDragStart = (e, index) => {
-    setDraggedIndex(index);
-    e.dataTransfer.effectAllowed = 'move';
-  };
+  const q = query.trim().toLowerCase();
+  const filtered = q
+    ? documents.filter((d) => d.title.toLowerCase().includes(q) || d.content.toLowerCase().includes(q))
+    : documents;
+  // Reordering only makes sense on the full, unfiltered list.
+  const canReorder = !q;
 
-  const handleDragOver = (e, index) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (draggedIndex === index) return;
-    setDragOverIndex(index);
-  };
-
-  const handleDrop = (e, index) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (draggedIndex !== null && draggedIndex !== index) {
-      onReorder(draggedIndex, index);
-    }
-    setDraggedIndex(null);
-    setDragOverIndex(null);
-  };
-
-  const handleDragEnd = () => {
+  const resetDrag = () => {
     setDraggedIndex(null);
     setDragOverIndex(null);
   };
 
   return (
-    <div className={`
-      ${isMobile ? 'fixed inset-y-0 left-0 z-30 shadow-2xl' : 'relative flex-shrink-0 border-r'} 
-      w-64 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-dark-900 flex flex-col h-full overflow-hidden transition-all duration-300
-    `}>
-      <div className="p-3 bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700 flex flex-col gap-2 relative z-10">
-        <div className="flex items-center justify-between text-gray-700 dark:text-gray-300 font-bold mb-1">
-          <span className="text-sm uppercase tracking-wider">Explorer</span>
-          <div className="flex items-center gap-1">
-            <button 
-              onClick={() => onCreate('Untitled')}
-              className="p-1 rounded text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-950/40 hover:text-brand-700 dark:hover:text-brand-300 transition"
-              title="New Document"
-            >
-              <PlusCircle size={18} />
+    <aside
+      aria-label="Documents"
+      className={`${isMobile ? 'fixed inset-y-0 left-0 z-30 shadow-xl' : 'relative shrink-0'} flex h-full w-64 flex-col border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-dark-800`}
+    >
+      <div className="flex items-center justify-between px-3 pb-2 pt-3">
+        <h2 className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
+          Documents <span className="ml-1 font-normal normal-case tracking-normal">{documents.length}</span>
+        </h2>
+        <div className="flex items-center">
+          <button onClick={() => onCreate('Untitled')} className={`${btn.icon} p-1.5`} title="New document" aria-label="New document">
+            <Plus size={17} />
+          </button>
+          {isMobile && (
+            <button onClick={onClose} className={`${btn.icon} p-1.5`} aria-label="Close sidebar">
+              <X size={17} />
             </button>
-            {isMobile && (
-              <button 
-                onClick={onClose}
-                className="p-1 rounded text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
-                title="Close Sidebar"
-              >
-                <X size={18} />
-              </button>
-            )}
-          </div>
+          )}
         </div>
       </div>
-      
-      <div className="flex-1 overflow-y-auto">
-        <div className="py-2 space-y-1">
-          {documents.map((doc, index) => (
-            <div
+
+      {documents.length > 3 && (
+        <div className="relative px-3 pb-2">
+          <Search size={14} className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Escape') setQuery(''); }}
+            placeholder="Search documents"
+            aria-label="Search documents"
+            className="w-full rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-900 py-1.5 pl-7 pr-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
+          />
+        </div>
+      )}
+
+      <ul className="min-h-0 flex-1 space-y-px overflow-y-auto px-2 pb-2">
+        {filtered.map((doc) => {
+          const index = documents.indexOf(doc);
+          return (
+            <li
               key={doc.id}
-              draggable
-              onDragStart={(e) => handleDragStart(e, index)}
-              onDragOver={(e) => handleDragOver(e, index)}
-              onDrop={(e) => handleDrop(e, index)}
-              onDragEnd={handleDragEnd}
-              className={`
-                transition-all duration-150 relative
-                ${draggedIndex === index ? 'opacity-40 grayscale scale-95' : 'opacity-100'}
-                ${dragOverIndex === index ? 'border-b-2 border-b-brand-500' : ''}
-              `}
+              draggable={canReorder}
+              onDragStart={(e) => { setDraggedIndex(index); e.dataTransfer.effectAllowed = 'move'; }}
+              onDragOver={(e) => {
+                if (draggedIndex === null) return;
+                e.preventDefault();
+                e.stopPropagation();
+                if (draggedIndex !== index) setDragOverIndex(index);
+              }}
+              onDrop={(e) => {
+                if (draggedIndex === null) return;
+                e.preventDefault();
+                e.stopPropagation();
+                if (draggedIndex !== index) onReorder(draggedIndex, index);
+                resetDrag();
+              }}
+              onDragEnd={resetDrag}
+              className={`relative ${draggedIndex === index ? 'opacity-40' : ''} ${dragOverIndex === index ? 'after:absolute after:inset-x-2 after:-bottom-px after:h-0.5 after:bg-brand-500' : ''}`}
             >
               <FileItem
                 document={doc}
                 isActive={doc.id === activeDocId}
                 onClick={() => onOpen(doc.id)}
-                onRename={(id, newTitle) => onRename(id, newTitle)}
+                onRename={onRename}
                 onDelete={onDelete}
+                onDuplicate={onDuplicate}
               />
-            </div>
-          ))}
-          {documents.length === 0 && (
-            <div className="text-center p-4 text-gray-500 text-sm">
-              No files yet.<br />Click the + icon to create one.
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+            </li>
+          );
+        })}
+        {filtered.length === 0 && (
+          <li className="px-3 py-6 text-center text-sm text-gray-500">
+            {q ? `No documents match “${query}”.` : 'No documents yet.'}
+          </li>
+        )}
+      </ul>
+
+      <p className="border-t border-gray-200 dark:border-gray-700 px-3 py-2 text-[11px] leading-4 text-gray-500 dark:text-gray-400">
+        Stored in this browser only.
+      </p>
+    </aside>
   );
 }

@@ -1,110 +1,46 @@
-import { useRef } from 'react';
-import { FileText, Settings, Upload, Download, ArrowRightLeft, Heart } from 'lucide-react';
+import { AlertTriangle, ArrowLeftRight, Check, Heart, LayoutTemplate, Paintbrush } from 'lucide-react';
 
-export default function Footer({ 
-  words, chars, charsNoSpace, syncEnabled, toggleSync, onExportModal, 
-  onSaveMd, onOpenMd, onOpenTemplateModal, onToggleCustomCss 
+const item = 'inline-flex items-center gap-1.5 rounded px-2 py-1 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-dark-700 dark:hover:text-gray-100 transition-colors';
+
+export default function Footer({
+  words, chars, storageError, syncEnabled, toggleSync, showSync,
+  onOpenTemplateModal, onToggleCustomCss, isCustomCssOpen, hasCustomCss,
 }) {
-  const fileInputRef = useRef(null);
-
-  const handleOpenClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      onOpenMd(file);
-    }
-    // clear input
-    e.target.value = '';
-  };
+  const minutes = Math.max(1, Math.round(words / 220));
 
   return (
-    <footer className="flex flex-wrap items-center justify-between px-4 py-2 bg-white dark:bg-dark-800 shadow-sm border-t border-gray-200 dark:border-gray-700 text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 font-medium z-10 w-full gap-2">
-      <div className="flex items-center space-x-3 sm:space-x-4">
-         <span className="text-gray-500 dark:text-gray-500">© {new Date().getFullYear()} Cak MaD</span>
-         <a 
-           href="https://saweria.co/januarsyah" 
-           target="_blank" 
-           rel="noopener noreferrer"
-           className="flex items-center space-x-1 text-orange-500 hover:text-orange-600 dark:hover:text-orange-400 transition"
-           title="Buy me a martabak"
-         >
-           <Heart size={12} fill="currentColor" />
-           <span className="hidden sm:inline text-[9px]">Buy Me a Martabak</span>
-         </a>
-         <span className="hidden xs:inline">Words: {words}</span>
-         <span className="hidden xs:inline">Chars: {chars}</span>
-       </div>
-      <div className="flex items-center space-x-2 sm:space-x-3 text-gray-500 overflow-x-auto no-scrollbar">
-        <button
-          onClick={onOpenTemplateModal}
-          className="flex items-center space-x-1.5 px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-          title="Choose Template"
-        >
-          <FileText size={14} />
-          <span className="hidden md:inline">Templates</span>
-        </button>
+    <footer className="flex h-full w-full items-center justify-between gap-2 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-800 px-2 text-xs text-gray-500 dark:text-gray-400">
+      <div className="flex min-w-0 items-center gap-3 px-2 tabular-nums">
+        {storageError ? (
+          <span className="inline-flex items-center gap-1 text-red-600 dark:text-red-400" title="Browser storage is full. Remove large images or delete old documents, then download a copy.">
+            <AlertTriangle size={13} /> Not saved — storage full
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1" title="Saved in this browser">
+            <Check size={13} className="text-emerald-600 dark:text-emerald-400" /> Saved
+          </span>
+        )}
+        <span>{words.toLocaleString()} words</span>
+        <span className="hidden sm:inline">{chars.toLocaleString()} characters</span>
+        <span className="hidden md:inline">{minutes} min read</span>
+      </div>
 
-        <button
-          onClick={onToggleCustomCss}
-          className="flex items-center space-x-1.5 px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-          title="Custom CSS Preview"
-        >
-          <Settings size={14} />
-          <span className="hidden md:inline">Custom CSS</span>
+      <div className="flex shrink-0 items-center">
+        <button onClick={onOpenTemplateModal} className={item} title="New from template (Ctrl+Alt+N)">
+          <LayoutTemplate size={14} /> <span className="hidden sm:inline">Templates</span>
         </button>
-
-        <div className="h-4 w-px bg-gray-300 dark:bg-gray-600 mx-1 hidden sm:block" />
-
-        <button
-          onClick={handleOpenClick}
-          className="flex items-center space-x-1.5 px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-          title="Open .md file"
-        >
-          <Upload size={14} />
-          <span className="hidden lg:inline">Open</span>
+        <button onClick={onToggleCustomCss} className={`${item} ${isCustomCssOpen ? 'text-gray-900 dark:text-gray-100' : ''}`} title="Custom CSS for this document" aria-pressed={isCustomCssOpen}>
+          <Paintbrush size={14} /> <span className="hidden sm:inline">CSS{hasCustomCss ? ' •' : ''}</span>
         </button>
-        <input 
-          type="file" 
-          accept=".md,.txt,text/markdown,text/plain" 
-          ref={fileInputRef} 
-          style={{ display: 'none' }} 
-          onChange={handleFileChange} 
-        />
-        
-        <button
-          onClick={onSaveMd}
-          className="flex items-center space-x-1.5 px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-          title="Save as .md file"
-        >
-          <Download size={14} />
-          <span className="hidden lg:inline">Save</span>
-        </button>
-
-        <button
-          onClick={toggleSync}
-          className={`flex items-center space-x-1.5 px-2 py-1 rounded transition-colors ${
-            syncEnabled 
-              ? 'bg-brand-50 text-brand-700 dark:bg-brand-950/40 dark:text-brand-300' 
-              : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-          }`}
-          title="Toggle Scroll Sync"
-        >
-          <ArrowRightLeft size={14} />
-          <span className="hidden md:inline">Sync: {syncEnabled ? 'ON' : 'OFF'}</span>
-        </button>
-
-        <button
-          onClick={onExportModal}
-          className="flex items-center space-x-1.5 px-2.5 py-1 rounded bg-brand-500 hover:bg-brand-600 transition text-white font-semibold shadow-sm"
-        >
-          <Download size={14} />
-          <span className="hidden sm:inline">Export PDF</span>
-        </button>
+        {showSync && (
+          <button onClick={toggleSync} className={item} title="Scroll the preview along with the editor" aria-pressed={syncEnabled}>
+            <ArrowLeftRight size={14} className={syncEnabled ? 'text-brand-600 dark:text-brand-400' : ''} />
+            <span className="hidden md:inline">Scroll sync {syncEnabled ? 'on' : 'off'}</span>
+          </button>
+        )}
+        <a href="https://saweria.co/januarsyah" target="_blank" rel="noopener noreferrer" className={item} title="Support Cak MaD">
+          <Heart size={14} /> <span className="hidden lg:inline">Support</span>
+        </a>
       </div>
     </footer>
   );

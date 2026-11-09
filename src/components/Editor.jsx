@@ -1,10 +1,12 @@
-import { forwardRef, useImperativeHandle, useRef } from 'react';
+import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { githubLight } from '@uiw/codemirror-theme-github';
-import { EditorView } from '@codemirror/view';
+import { EditorView, keymap } from '@codemirror/view';
+import { Prec } from '@codemirror/state';
+import { COMMANDS } from './editorCommands';
 
 const Editor = forwardRef(({ value, onChange, isDark, lineWrapping }, ref) => {
   const editorRef = useRef(null);
@@ -13,25 +15,45 @@ const Editor = forwardRef(({ value, onChange, isDark, lineWrapping }, ref) => {
     insertText: (text) => {
       const view = editorRef.current?.view;
       if (!view) return;
-      
-      const { state, dispatch } = view;
-      const { from, to } = state.selection.main;
-      
-      dispatch({
+      const { from, to } = view.state.selection.main;
+      view.dispatch({
         changes: { from, to, insert: text },
         selection: { anchor: from + text.length },
-        scrollIntoView: true
+        scrollIntoView: true,
       });
-    }
+      view.focus();
+    },
+    run: (name) => {
+      const view = editorRef.current?.view;
+      if (view && COMMANDS[name]) COMMANDS[name](view);
+    },
   }));
 
-  const extensions = [
-    markdown({ base: markdownLanguage, codeLanguages: languages }),
-  ];
-
-  if (lineWrapping) {
-    extensions.push(EditorView.lineWrapping);
-  }
+  const extensions = useMemo(() => {
+    const ext = [
+      markdown({ base: markdownLanguage, codeLanguages: languages }),
+      Prec.high(keymap.of([
+        { key: 'Mod-b', run: COMMANDS.bold },
+        { key: 'Mod-i', run: COMMANDS.italic },
+        { key: 'Mod-k', run: COMMANDS.link },
+        { key: 'Mod-Shift-x', run: COMMANDS.strike },
+        { key: 'Mod-`', run: COMMANDS.code },
+      ])),
+      // Let the app-level drop zone handle files (open .md / insert images)
+      // instead of CodeMirror pasting the raw file text at the cursor.
+      EditorView.domEventHandlers({
+        drop: (e) => e.dataTransfer?.files?.length > 0,
+      }),
+      EditorView.theme({
+        '&': { fontSize: '14px' },
+        '.cm-content': { fontFamily: "'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace", padding: '16px 0', fontVariantLigatures: 'none' },
+        '.cm-gutters': { border: 'none' },
+        '.cm-line': { padding: '0 16px 0 8px' },
+      }),
+    ];
+    if (lineWrapping) ext.push(EditorView.lineWrapping);
+    return ext;
+  }, [lineWrapping]);
 
   return (
     <div className="h-full w-full overflow-hidden bg-white dark:bg-[#282c34]">
@@ -42,7 +64,8 @@ const Editor = forwardRef(({ value, onChange, isDark, lineWrapping }, ref) => {
         extensions={extensions}
         theme={isDark ? oneDark : githubLight}
         onChange={onChange}
-        className="h-full text-base [&>.cm-editor]:h-full [&>.cm-editor]:outline-none"
+        placeholder="Write or paste Markdown here…"
+        className="h-full [&>.cm-editor]:h-full [&>.cm-editor]:outline-none"
         basicSetup={{
           lineNumbers: true,
           highlightActiveLineGutter: true,
@@ -52,7 +75,7 @@ const Editor = forwardRef(({ value, onChange, isDark, lineWrapping }, ref) => {
           indentOnInput: true,
           bracketMatching: true,
           closeBrackets: true,
-          autocompletion: true,
+          autocompletion: false,
           rectangularSelection: true,
           crosshairCursor: true,
           highlightActiveLine: true,
@@ -62,7 +85,7 @@ const Editor = forwardRef(({ value, onChange, isDark, lineWrapping }, ref) => {
           searchKeymap: true,
           historyKeymap: true,
           foldKeymap: true,
-          completionKeymap: true,
+          completionKeymap: false,
           lintKeymap: true,
         }}
       />
@@ -73,4 +96,3 @@ const Editor = forwardRef(({ value, onChange, isDark, lineWrapping }, ref) => {
 Editor.displayName = 'Editor';
 
 export default Editor;
-

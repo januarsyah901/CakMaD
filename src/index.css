@@ -3,110 +3,180 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
   body {
-    @apply transition-colors duration-200;
+    @apply bg-gray-50 text-gray-900 antialiased dark:bg-dark-900 dark:text-gray-100;
   }
 }
 
-/* Custom scrollbar for editor/preview */
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 ::-webkit-scrollbar-track {
   @apply bg-transparent;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+  @apply rounded-full border-2 border-solid border-transparent bg-gray-300 bg-clip-padding dark:bg-gray-700;
 }
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-gray-400 dark:bg-gray-600;
 }
 
-/* Preview Markdown Styles */
+/* Dialogs */
+.modal-backdrop {
+  animation: fade-in 120ms ease-out;
+}
+.modal-panel {
+  animation: rise-in 160ms ease-out;
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(8px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+/* Markdown preview */
 .markdown-preview {
-  @apply text-base text-gray-800 dark:text-gray-200 leading-relaxed max-w-none;
+  @apply max-w-none text-[15px] leading-7 text-gray-800 dark:text-gray-200;
+  overflow-wrap: break-word;
+}
+.markdown-preview > :first-child {
+  @apply mt-0;
 }
 .markdown-preview h1 {
-  @apply text-3xl font-bold mt-8 mb-4 tracking-tight text-gray-900 dark:text-gray-100;
+  @apply mb-4 mt-10 text-3xl font-bold leading-tight tracking-tight text-gray-900 dark:text-gray-50;
 }
 .markdown-preview h2 {
-  @apply text-2xl font-bold mt-8 mb-4 tracking-tight border-b border-gray-200 dark:border-gray-700 pb-2 text-gray-900 dark:text-gray-100;
+  @apply mb-3 mt-10 border-b border-gray-200 pb-2 text-2xl font-semibold leading-snug tracking-tight text-gray-900 dark:border-gray-700 dark:text-gray-50;
 }
 .markdown-preview h3 {
-  @apply text-xl font-bold mt-6 mb-3 text-gray-900 dark:text-gray-100;
+  @apply mb-2 mt-8 text-xl font-semibold text-gray-900 dark:text-gray-100;
+}
+.markdown-preview h4 {
+  @apply mb-2 mt-6 text-base font-semibold text-gray-900 dark:text-gray-100;
+}
+.markdown-preview h5,
+.markdown-preview h6 {
+  @apply mb-2 mt-6 text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400;
 }
 .markdown-preview p {
   @apply mb-4;
 }
 .markdown-preview a {
-  @apply text-brand-600 dark:text-brand-400 hover:underline;
+  @apply text-brand-700 underline decoration-brand-500/40 underline-offset-2 hover:decoration-brand-500 dark:text-brand-400;
+}
+.markdown-preview strong {
+  @apply font-semibold text-gray-900 dark:text-gray-50;
 }
 .markdown-preview ul {
-  @apply list-disc list-outside mb-4 ml-6;
+  @apply mb-4 ml-6 list-outside list-disc;
 }
 .markdown-preview ol {
-  @apply list-decimal list-outside mb-4 ml-6;
+  @apply mb-4 ml-6 list-outside list-decimal;
+}
+.markdown-preview li {
+  @apply mb-1;
+}
+.markdown-preview li > ul,
+.markdown-preview li > ol {
+  @apply mb-0 mt-1;
+}
+.markdown-preview ul.contains-task-list {
+  @apply ml-1 list-none;
+}
+.markdown-preview .task-list-item input[type='checkbox'] {
+  @apply mr-2 h-3.5 w-3.5 translate-y-[1px] accent-brand-500;
 }
 .markdown-preview blockquote {
-  @apply border-l-4 border-brand-500 bg-brand-50/50 dark:bg-brand-950/20 py-2 px-4 mb-4 italic text-gray-700 dark:text-gray-300 rounded-r;
+  @apply mb-4 border-l-[3px] border-gray-300 py-0.5 pl-4 text-gray-600 dark:border-gray-600 dark:text-gray-400;
+}
+.markdown-preview blockquote > :last-child {
+  @apply mb-0;
 }
 .markdown-preview code {
-  @apply bg-gray-100 dark:bg-gray-800 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded text-sm font-mono;
+  @apply rounded bg-gray-100 px-1.5 py-0.5 font-mono text-[0.85em] text-gray-800 dark:bg-gray-800 dark:text-gray-200;
 }
 .markdown-preview pre {
-  @apply bg-gray-900 dark:bg-[#1e1e1e] text-gray-100 p-4 rounded-lg mb-4 overflow-x-auto;
+  @apply mb-4 overflow-x-auto rounded-md bg-gray-900 p-4 text-[13px] leading-6 text-gray-100 dark:bg-black/40;
 }
-.markdown-preview pre code {
-  @apply bg-transparent text-inherit p-0 rounded-none text-sm;
+.markdown-preview pre code,
+.markdown-preview pre code.hljs {
+  @apply rounded-none bg-transparent p-0 text-inherit;
 }
 .markdown-preview hr {
   @apply my-8 border-gray-200 dark:border-gray-700;
 }
 .markdown-preview table {
-  @apply w-full text-left mb-4 border-collapse;
+  @apply mb-4 w-full border-collapse text-left text-sm;
 }
 .markdown-preview th,
 .markdown-preview td {
-  @apply border border-gray-300 dark:border-gray-600 px-4 py-2;
+  @apply border border-gray-200 px-3 py-2 dark:border-gray-700;
 }
 .markdown-preview th {
-  @apply bg-gray-100 dark:bg-gray-800 font-semibold;
+  @apply bg-gray-50 font-semibold dark:bg-gray-800;
 }
 .markdown-preview img {
-  @apply max-w-full h-auto rounded-lg shadow-sm;
+  @apply h-auto max-w-full rounded;
+}
+.markdown-preview del {
+  @apply text-gray-500;
+}
+.markdown-preview .katex-display {
+  @apply overflow-x-auto overflow-y-hidden py-1;
+}
+/* Mermaid's neutral theme is drawn for light paper; keep it on paper in dark mode too. */
+.dark .markdown-preview .mermaid-block:not(.animate-pulse) {
+  @apply rounded-md bg-white p-4;
 }
 
-/* Print Styles */
+/* Print */
 @media print {
   .markdown-preview {
     color: #000 !important;
     background: transparent !important;
   }
-  
-  .markdown-preview h1, 
-  .markdown-preview h2, 
-  .markdown-preview h3, 
-  .markdown-preview h4, 
-  .markdown-preview h5, 
+  .markdown-preview h1,
+  .markdown-preview h2,
+  .markdown-preview h3,
+  .markdown-preview h4,
+  .markdown-preview h5,
   .markdown-preview h6 {
-    page-break-after: avoid;
     break-after: avoid;
   }
-
-  .markdown-preview p, 
-  .markdown-preview li, 
-  .markdown-preview blockquote, 
-  .markdown-preview pre, 
-  .markdown-preview table, 
-  .markdown-preview tr, 
+  .markdown-preview p,
+  .markdown-preview li,
+  .markdown-preview blockquote,
+  .markdown-preview pre,
+  .markdown-preview table,
+  .markdown-preview tr,
   .markdown-preview img {
-    page-break-inside: avoid;
     break-inside: avoid;
   }
-
   .markdown-preview hr {
-    page-break-after: always;
     break-after: page;
     border: none;
     margin: 0;
