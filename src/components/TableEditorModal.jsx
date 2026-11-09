@@ -1,109 +1,96 @@
-import React, { useState } from 'react';
-import { X, Table as TableIcon } from 'lucide-react';
+import { useState } from 'react';
+import { AlignLeft, AlignCenter, AlignRight } from 'lucide-react';
+import Modal from './ui/Modal';
+import { btn, input, label, segment, segmentGroup } from './ui/styles';
+
+const clamp = (n, min, max) => Math.min(max, Math.max(min, Number.isFinite(n) ? n : min));
+const ALIGN = { left: ':---', center: ':---:', right: '---:' };
+
+function buildTable(rows, cols, alignment) {
+  const header = Array.from({ length: cols }, (_, i) => `Column ${i + 1}`);
+  const lines = [
+    `| ${header.join(' | ')} |`,
+    `| ${Array(cols).fill(ALIGN[alignment]).join(' | ')} |`,
+    ...Array.from({ length: rows }, () => `| ${Array(cols).fill('   ').join(' | ')} |`),
+  ];
+  return lines.join('\n');
+}
 
 export default function TableEditorModal({ isOpen, onClose, onInsert }) {
   const [rows, setRows] = useState(3);
   const [cols, setCols] = useState(3);
   const [alignment, setAlignment] = useState('left');
+  const [hover, setHover] = useState(null);
 
-  if (!isOpen) return null;
-
-  const handleGenerate = () => {
-    let tableMd = '\n';
-    
-    // Header
-    tableMd += '| ' + Array(cols).fill('Header').join(' | ') + ' |\n';
-    
-    // Alignment row
-    const alignStr = alignment === 'center' ? ':---:' : alignment === 'right' ? '---:' : ':---';
-    tableMd += '| ' + Array(cols).fill(alignStr).join(' | ') + ' |\n';
-    
-    // Data rows
-    for (let i = 0; i < rows; i++) {
-      tableMd += '| ' + Array(cols).fill('Cell').join(' | ') + ' |\n';
-    }
-    
-    onInsert(tableMd + '\n');
+  const insert = () => {
+    onInsert(`\n${buildTable(rows, cols, alignment)}\n`);
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white dark:bg-dark-800 rounded-xl shadow-2xl w-full max-w-md border border-gray-200 dark:border-gray-700 overflow-hidden transform animate-in zoom-in-95 duration-200">
-        <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-dark-900/50">
-          <div className="flex items-center gap-2">
-            <TableIcon className="text-blue-500" size={20} />
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Insert Table</h3>
-          </div>
-          <button 
-            onClick={onClose}
-            className="p-1 hover:bg-gray-200 dark:hover:bg-dark-700 rounded-full transition-colors text-gray-500 dark:text-gray-400"
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Insert table"
+      footer={
+        <>
+          <button onClick={onClose} className={btn.ghost}>Cancel</button>
+          <button onClick={insert} className={btn.primary}>Insert {cols} × {rows} table</button>
+        </>
+      }
+    >
+      <div className="space-y-4">
+        <div>
+          <span className={label}>Pick a size</span>
+          <div
+            className="inline-grid gap-1 rounded-md bg-gray-100 dark:bg-dark-900 p-2"
+            style={{ gridTemplateColumns: 'repeat(8, 1.25rem)' }}
+            onMouseLeave={() => setHover(null)}
           >
-            <X size={20} />
-          </button>
-        </div>
-
-        <div className="p-6 space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Rows</label>
-              <input
-                type="number"
-                min="1"
-                max="50"
-                value={rows}
-                onChange={(e) => setRows(parseInt(e.target.value) || 1)}
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-dark-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all dark:text-white"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Columns</label>
-              <input
-                type="number"
-                min="1"
-                max="20"
-                value={cols}
-                onChange={(e) => setCols(parseInt(e.target.value) || 1)}
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-dark-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all dark:text-white"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Alignment</label>
-            <div className="flex bg-gray-100 dark:bg-dark-900 p-1 rounded-lg">
-              {['left', 'center', 'right'].map((align) => (
+            {Array.from({ length: 6 * 8 }).map((_, i) => {
+              const r = Math.floor(i / 8) + 1;
+              const c = (i % 8) + 1;
+              const ref = hover || { r: rows, c: cols };
+              const on = r <= ref.r && c <= ref.c;
+              return (
                 <button
-                  key={align}
-                  onClick={() => setAlignment(align)}
-                  className={`flex-1 py-1.5 text-sm font-medium rounded-md capitalize transition-all ${
-                    alignment === align
-                      ? 'bg-white dark:bg-dark-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                  }`}
-                >
-                  {align}
-                </button>
-              ))}
-            </div>
+                  key={i}
+                  type="button"
+                  aria-label={`${c} columns, ${r} rows`}
+                  onMouseEnter={() => setHover({ r, c })}
+                  onFocus={() => setHover({ r, c })}
+                  onClick={() => { setRows(r); setCols(c); }}
+                  className={`h-5 w-5 rounded-sm border transition-colors ${on ? 'border-brand-500 bg-brand-100 dark:bg-brand-900/50' : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-dark-800'}`}
+                />
+              );
+            })}
           </div>
         </div>
 
-        <div className="p-4 bg-gray-50 dark:bg-dark-900/50 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-dark-700 rounded-lg transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleGenerate}
-            className="px-6 py-2 text-sm font-medium text-white bg-brand-500 hover:bg-brand-600 rounded-lg shadow-md shadow-brand-500/20 transition-all active:scale-95"
-          >
-            Generate Table
-          </button>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label htmlFor="tbl-cols" className={label}>Columns</label>
+            <input id="tbl-cols" type="number" min={1} max={20} value={cols} onChange={(e) => setCols(clamp(parseInt(e.target.value, 10), 1, 20))} className={input} />
+          </div>
+          <div>
+            <label htmlFor="tbl-rows" className={label}>Body rows</label>
+            <input id="tbl-rows" type="number" min={1} max={50} value={rows} onChange={(e) => setRows(clamp(parseInt(e.target.value, 10), 1, 50))} className={input} />
+          </div>
         </div>
+
+        <div>
+          <span className={label}>Text alignment</span>
+          <div className={segmentGroup} role="radiogroup" aria-label="Alignment">
+            {[{ a: 'left', Icon: AlignLeft }, { a: 'center', Icon: AlignCenter }, { a: 'right', Icon: AlignRight }].map((o) => (
+              <button key={o.a} role="radio" aria-checked={alignment === o.a} onClick={() => setAlignment(o.a)} className={`${segment(alignment === o.a)} inline-flex items-center justify-center gap-1.5 capitalize`}>
+                <o.Icon size={14} /> {o.a}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <pre className="max-h-32 overflow-auto rounded-md bg-gray-50 dark:bg-dark-900 p-3 font-mono text-xs text-gray-600 dark:text-gray-400">{buildTable(Math.min(rows, 4), cols, alignment)}{rows > 4 ? '\n…' : ''}</pre>
       </div>
-    </div>
+    </Modal>
   );
 }

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Moon, Sun, Menu, HelpCircle, ArrowLeft } from 'lucide-react';
+import { Moon, Sun, PanelLeft, Keyboard, Download, FileDown, Minimize2 } from 'lucide-react';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { Toaster, toast } from 'react-hot-toast';
 
@@ -17,12 +17,14 @@ import TemplateModal from './components/TemplateModal';
 import ConfirmModal from './components/ConfirmModal';
 import LandingPage from './components/LandingPage';
 import OnboardingModal from './components/OnboardingModal';
+import ShortcutsModal from './components/ShortcutsModal';
 import EmptyStateGuidance from './components/EmptyStateGuidance';
+import { btn } from './components/ui/styles';
 
 import { useFileManager } from './hooks/useFileManager';
 import { useScrollSync } from './hooks/useScrollSync';
 import { useFocusMode } from './hooks/useFocusMode';
-import { countWords, countChars, countCharsNoSpace } from './utils/wordCount';
+import { countWords, countChars } from './utils/wordCount';
 import { saveAsMd } from './utils/exportMd';
 import { readMdFile } from './utils/importMd';
 import { imageToBase64 } from './utils/imageToBase64';
@@ -31,279 +33,276 @@ import { templates } from './data/templates';
 
 const ONBOARDING_KEY = 'cakmad_onboarded_v1';
 const HAS_ENTERED_EDITOR_KEY = 'cakmad_entered_editor';
+const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
+
+const stored = (key, fallback) => {
+  try {
+    const v = localStorage.getItem(key);
+    return v === null ? fallback : v;
+  } catch {
+    return fallback;
+  }
+};
+
+const titleFromFile = (name) => name.replace(/\.(md|markdown|txt)$/i, '') || 'Untitled';
 
 export default function App() {
   const {
     documents, activeDocId, activeTabIds, activeDoc, activeContent,
     updateContent, createDocument, openDocument, closeTab, deleteDocument, renameDocument,
-    reorderTabs, reorderDocuments
+    reorderTabs, reorderDocuments, duplicateDocument, storageError,
   } = useFileManager();
 
   const { isFocusMode, toggleFocusMode } = useFocusMode();
-  
-  // Landing page state
-  const [showLanding, setShowLanding] = useState(() => {
-    // Show landing page if user hasn't actively entered editor before
-    return localStorage.getItem(HAS_ENTERED_EDITOR_KEY) !== 'true';
-  });
 
-  // Onboarding modal state
-  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
-
-  useEffect(() => {
-    // Show onboarding only once upon entering editor
-    if (!showLanding) {
-      const hasOnboarded = localStorage.getItem(ONBOARDING_KEY) === 'true';
-      if (!hasOnboarded) {
-        setIsOnboardingOpen(true);
-      }
-    }
-  }, [showLanding]);
-
-  const [isPreviewVisible, setIsPreviewVisible] = useState(() => {
-    return localStorage.getItem('mde_v11_preview') !== 'false';
-  });
-  
-  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
-    return localStorage.getItem('mde_v12_sidebar') !== 'false';
-  });
-
-  // Mobile segmented view mode: 'split' | 'editor' | 'preview'
-  const [mobileViewMode, setMobileViewMode] = useState('editor');
-  
-  const previewRef = useRef(null);
-  const previewScrollContainerRef = useRef(null);
-  const editorRef = useRef(null);
-
-  const { syncEnabled, toggleSync } = useScrollSync(previewScrollContainerRef);
-
+  const [showLanding, setShowLanding] = useState(() => stored(HAS_ENTERED_EDITOR_KEY, 'false') !== 'true');
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(
+    () => stored(HAS_ENTERED_EDITOR_KEY, 'false') === 'true' && stored(ONBOARDING_KEY, 'false') !== 'true'
+  );
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
   const [isCustomCssOpen, setIsCustomCssOpen] = useState(false);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
-  
-  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 1024 : false);
+  const [confirmConfig, setConfirmConfig] = useState({ isOpen: false });
+
+  const [isPreviewVisible, setIsPreviewVisible] = useState(() => stored('mde_v11_preview', 'true') !== 'false');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => window.innerWidth >= 1024 && stored('mde_v12_sidebar', 'true') !== 'false');
+  const [mobileViewMode, setMobileViewMode] = useState('editor');
+  const [selectedFont, setSelectedFont] = useState(() => stored('md-editor-font', 'sans-serif'));
+  const [isLineWrapping, setIsLineWrapping] = useState(() => stored('md-editor-line-wrapping', 'true') !== 'false');
+  const [isDark, setIsDark] = useState(() => {
+    const theme = stored('theme', null);
+    return theme ? theme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 1024);
+
+  const previewScrollContainerRef = useRef(null);
+  const editorRef = useRef(null);
+  const openFileInputRef = useRef(null);
+
+  const { syncEnabled, toggleSync } = useScrollSync(previewScrollContainerRef);
+
+  // ---- persisted preferences -------------------------------------------------
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDark);
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  }, [isDark]);
+  useEffect(() => { localStorage.setItem('mde_v11_preview', String(isPreviewVisible)); }, [isPreviewVisible]);
+  useEffect(() => { localStorage.setItem('mde_v12_sidebar', String(isSidebarOpen)); }, [isSidebarOpen]);
+  useEffect(() => { localStorage.setItem('md-editor-font', selectedFont); }, [selectedFont]);
+  useEffect(() => { localStorage.setItem('md-editor-line-wrapping', String(isLineWrapping)); }, [isLineWrapping]);
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 1024);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const onResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  // Close sidebar on mobile when switching documents or creating new ones
   useEffect(() => {
-    if (isMobile && isSidebarOpen) {
-      setIsSidebarOpen(false);
+    if (storageError) {
+      toast.error('Browser storage is full, so recent changes are not saved. Remove large images or delete old documents.', { id: 'storage', duration: 8000 });
     }
-  }, [activeDocId, isMobile]);
+  }, [storageError]);
 
-  const [confirmConfig, setConfirmConfig] = useState({ 
-    isOpen: false, title: '', message: '', type: 'warning', onConfirm: null, confirmText: 'Confirm' 
-  });
-
-  const showConfirm = (title, message, onConfirm, type = 'warning', confirmText = 'Confirm') => {
-    setConfirmConfig({ isOpen: true, title, message, onConfirm, type, confirmText });
-  };
-
-  // Persistent font & wrapping
-  const [selectedFont, setSelectedFont] = useState(() => {
-    return localStorage.getItem('md-editor-font') || 'sans-serif';
-  });
-
-  const [isLineWrapping, setIsLineWrapping] = useState(() => {
-    return localStorage.getItem('md-editor-line-wrapping') !== 'false';
-  });
-
-  useEffect(() => {
-    localStorage.setItem('md-editor-line-wrapping', isLineWrapping.toString());
-  }, [isLineWrapping]);
-
-  useEffect(() => {
-    localStorage.setItem('md-editor-font', selectedFont);
-  }, [selectedFont]);
-
+  // ---- actions ---------------------------------------------------------------
   const customCss = activeDoc?.customCss || '';
-  const setCustomCss = (newCss) => {
-    if (activeDoc) {
-      updateContent(activeContent, { customCss: newCss });
-    }
+  const setCustomCss = (css) => {
+    if (activeDoc) updateContent(activeContent, { customCss: css });
   };
 
-  // Dark Mode State
-  const [isDark, setIsDark] = useState(() => {
-    return localStorage.getItem('theme') === 'dark' || 
-           (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  });
+  const runCommand = useCallback((name) => editorRef.current?.run(name), []);
 
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDark]);
-
-  useEffect(() => {
-    localStorage.setItem('mde_v11_preview', isPreviewVisible.toString());
-  }, [isPreviewVisible]);
-
-  useEffect(() => {
-    localStorage.setItem('mde_v12_sidebar', isSidebarOpen.toString());
-  }, [isSidebarOpen]);
-
-  const toggleDarkMode = () => setIsDark(!isDark);
-
-  const handleInsert = useCallback((text, selectionOffset = 0) => {
-    if (editorRef.current?.insertText) {
-      editorRef.current.insertText(text, selectionOffset);
-    } else {
-      updateContent(activeContent + text);
-    }
+  const handleInsert = useCallback((text) => {
+    if (editorRef.current?.insertText) editorRef.current.insertText(text);
+    else updateContent(activeContent + text);
   }, [activeContent, updateContent]);
 
   const handleImageUpload = async (file) => {
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error("Image too large! Max 2MB allowed.");
+    if (file.size > MAX_IMAGE_BYTES) {
+      toast.error(`${file.name} is ${(file.size / 1024 / 1024).toFixed(1)} MB. Images are limited to 2 MB.`);
       return;
     }
-    
     try {
       const base64 = await imageToBase64(file);
-      const imgTag = `\n![${file.name}](${base64})\n`;
-      handleInsert(imgTag);
-      toast.success("Image added ✓");
+      const alt = file.name.replace(/\.[^.]+$/, '') || 'image';
+      handleInsert(`\n![${alt}](${base64})\n`);
     } catch (err) {
       console.error(err);
-      toast.error("Failed to upload image");
+      toast.error(`Could not read ${file.name}.`);
     }
   };
 
   const handlePaste = (e) => {
-    const items = (e.clipboardData || e.originalEvent?.clipboardData)?.items;
-    if (!items) return;
-    for (const item of items) {
-      if (item.type.indexOf('image') !== -1) {
+    for (const item of e.clipboardData?.items || []) {
+      if (item.type.startsWith('image/')) {
         const file = item.getAsFile();
-        if (file) handleImageUpload(file);
+        if (file) {
+          e.preventDefault();
+          handleImageUpload(file);
+        }
       }
     }
   };
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const files = Array.from(e.dataTransfer.files);
-    files.forEach(file => {
-      if (file.type.startsWith('image/')) {
-        handleImageUpload(file);
-      }
-    });
-  };
-
-  const handleDropFile = async (file) => {
+  const handleOpenFile = async (file) => {
     try {
       const content = await readMdFile(file);
-      const title = file.name.replace(/\.md$/i, '');
-      createDocument(title, content);
-      analytics.track('Document Created', { source: 'file_import', title });
-      toast.success("Document loaded ✓");
+      createDocument(titleFromFile(file.name), content);
+      analytics.track('Document Created', { source: 'file_import' });
+      toast.success(`Opened ${file.name}`);
     } catch (err) {
       console.error(err);
-      toast.error("Failed to load document");
+      toast.error(`Could not open ${file.name}.`);
     }
   };
 
   const handleSaveMd = () => {
-    if (activeDoc) {
-      analytics.track('Export Started', { format: 'markdown' });
-      saveAsMd(activeContent, activeDoc.title);
-      toast.success("File saved ✓");
-      window.open('https://saweria.co/januarsyah', '_blank', 'noopener,noreferrer');
-    }
+    if (!activeDoc) return;
+    analytics.track('Export Started', { format: 'markdown' });
+    saveAsMd(activeContent, activeDoc.title);
+    toast.success(`Downloaded ${activeDoc.title}.md`);
   };
 
-  // Keyboard shortcut system
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (showLanding) return;
-
-      if (e.key === 'Escape' && isFocusMode) {
-        e.preventDefault();
-        toggleFocusMode(false);
-      }
-
-      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-        e.preventDefault();
-        handleSaveMd();
-      }
-
-      if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
-        e.preventDefault();
-        setIsExportModalOpen(true);
-      }
-
-      if ((e.ctrlKey || e.metaKey) && e.altKey && e.key === 'n') {
-        e.preventDefault();
-        setIsTemplateModalOpen(true);
-      }
-
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'f') {
-        e.preventDefault();
-        toggleFocusMode();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showLanding, isFocusMode, toggleFocusMode, handleSaveMd]);
-
-  const activeTabs = activeTabIds.map(id => documents.find(d => d.id === id)).filter(Boolean);
-
-  const words = countWords(activeContent);
-  const chars = countChars(activeContent);
-  const charsNoSpace = countCharsNoSpace(activeContent);
+  const openExport = () => {
+    if (activeDoc) setIsExportModalOpen(true);
+  };
 
   const handleDeleteDocument = (id) => {
-    const doc = documents.find(d => d.id === id);
+    const doc = documents.find((d) => d.id === id);
     if (!doc) return;
-    
-    showConfirm(
-      "Hapus Dokumen?",
-      `Apakah Anda yakin ingin menghapus "${doc.title}"? Tindakan ini tidak bisa dibatalkan.`,
-      () => {
+    setConfirmConfig({
+      isOpen: true,
+      title: `Delete “${doc.title}”?`,
+      message: 'The document is removed from this browser. This cannot be undone.',
+      confirmText: 'Delete',
+      destructive: true,
+      onConfirm: () => {
         deleteDocument(id);
-        toast.success("Dokumen dihapus ✓");
+        toast.success(`Deleted ${doc.title}`);
       },
-      "error",
-      "Hapus"
-    );
+    });
   };
 
-  const enterEditor = (loadTemplate = null) => {
-    localStorage.setItem(HAS_ENTERED_EDITOR_KEY, 'true');
-    setShowLanding(false);
-    if (loadTemplate) {
-      createDocument(loadTemplate.label, loadTemplate.content);
+  const newBlank = (source) => {
+    analytics.track('Document Created', { source });
+    createDocument('Untitled', '');
+  };
+
+  // On small screens the sidebar is an overlay: close it after picking a document.
+  const closeSidebarOnMobile = () => {
+    if (isMobile) setIsSidebarOpen(false);
+  };
+
+  // ---- keyboard shortcuts ----------------------------------------------------
+  // Keep the latest handlers in a ref so the listener is registered once.
+  const shortcuts = useRef(null);
+  const handleShortcut = (e) => {
+    if (showLanding) return;
+    const mod = e.ctrlKey || e.metaKey;
+    // With Shift held e.key is upper-case and Alt changes it on some layouts; match physical keys.
+    const code = e.code;
+
+    if (e.key === 'Escape' && isFocusMode) {
+      e.preventDefault();
+      toggleFocusMode(false);
+      return;
+    }
+    if (!mod) return;
+
+    const actions = {
+      KeyS: !e.shiftKey && handleSaveMd,
+      KeyE: !e.shiftKey && openExport,
+      KeyO: !e.shiftKey && (() => openFileInputRef.current?.click()),
+      KeyN: e.altKey && (() => setIsTemplateModalOpen(true)),
+      KeyF: e.shiftKey && (() => toggleFocusMode()),
+      KeyP: e.shiftKey && (() => setIsPreviewVisible((v) => !v)),
+      Slash: () => setIsShortcutsOpen(true),
+    };
+    const action = actions[code];
+    if (action) {
+      e.preventDefault();
+      // Runs in the capture phase: keep CodeMirror from also handling it (e.g. Ctrl+/ toggles comments).
+      e.stopPropagation();
+      action();
     }
   };
+  useEffect(() => { shortcuts.current = handleShortcut; });
+  useEffect(() => {
+    const onKey = (e) => shortcuts.current?.(e);
+    window.addEventListener('keydown', onKey, true);
+    return () => window.removeEventListener('keydown', onKey, true);
+  }, []);
 
-  // Render Landing Page if visitor hasn't stepped into editor yet
+  // ---- landing ---------------------------------------------------------------
+  const enterEditor = (template = null) => {
+    localStorage.setItem(HAS_ENTERED_EDITOR_KEY, 'true');
+    setShowLanding(false);
+    if (localStorage.getItem(ONBOARDING_KEY) !== 'true') setIsOnboardingOpen(true);
+    if (template) createDocument(template.label, template.content);
+  };
+
   if (showLanding) {
     return (
       <LandingPage
+        isDark={isDark}
+        onToggleDark={() => setIsDark((d) => !d)}
         onStartWriting={() => enterEditor()}
-        onViewExample={() => {
-          const reportTemplate = templates.find(t => t.id === 'ai-report') || templates[0];
-          enterEditor(reportTemplate);
+        onViewExample={() => enterEditor(templates.find((t) => t.id === 'ai-report'))}
+        onStartTemplate={(t) => {
+          analytics.track('Template Selected', { templateId: t.id, source: 'landing' });
+          enterEditor(t);
         }}
       />
     );
   }
 
-  return (
-    <div className="flex flex-col h-screen bg-gray-50 dark:bg-dark-900 text-gray-900 dark:text-gray-100 transition-colors font-sans overflow-hidden">
-      <Toaster position="bottom-right" />
+  // ---- editor ----------------------------------------------------------------
+  const activeTabs = activeTabIds.map((id) => documents.find((d) => d.id === id)).filter(Boolean);
+  const hasDoc = activeTabs.length > 0 && !!activeDoc;
 
-      {/* Onboarding Dialog */}
+  const editorPane = (
+    <div className="relative flex h-full w-full flex-col overflow-hidden" onPaste={handlePaste}>
+      <Editor
+        value={activeContent}
+        onChange={(val) => updateContent(val)}
+        isDark={isDark}
+        ref={editorRef}
+        lineWrapping={isLineWrapping}
+      />
+    </div>
+  );
+
+  const previewPane = (
+    <div ref={previewScrollContainerRef} className="h-full w-full overflow-y-auto bg-white dark:bg-dark-800">
+      <div className="mx-auto w-full max-w-3xl px-5 py-8 pb-24 sm:px-10">
+        <Preview content={activeContent} selectedFont={selectedFont} customCss={customCss} />
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="flex h-[100dvh] flex-col overflow-hidden bg-gray-50 dark:bg-dark-900 text-gray-900 dark:text-gray-100">
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          className: '!text-sm !rounded-md !shadow-lg dark:!bg-dark-700 dark:!text-gray-100',
+          duration: 3000,
+        }}
+      />
+
+      <input
+        ref={openFileInputRef}
+        type="file"
+        accept=".md,.markdown,.txt,text/markdown,text/plain"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) handleOpenFile(file);
+          e.target.value = '';
+        }}
+      />
+
       <OnboardingModal
         isOpen={isOnboardingOpen}
         onClose={() => {
@@ -311,284 +310,188 @@ export default function App() {
           setIsOnboardingOpen(false);
         }}
       />
-
-      {/* Export Dialog */}
-      <ExportModal 
-        isOpen={isExportModalOpen} 
-        onClose={() => setIsExportModalOpen(false)} 
-        getPreviewRef={() => previewRef.current}
+      <ShortcutsModal isOpen={isShortcutsOpen} onClose={() => setIsShortcutsOpen(false)} onShowIntro={() => setIsOnboardingOpen(true)} />
+      {isExportModalOpen && <ExportModal
+        isOpen
+        onClose={() => setIsExportModalOpen(false)}
+        content={activeContent}
+        docTitle={activeDoc?.title}
         selectedFont={selectedFont}
         customCss={customCss}
-      />
-
-      {/* Table Editor Dialog */}
-      <TableEditorModal
-        isOpen={isTableModalOpen}
-        onClose={() => setIsTableModalOpen(false)}
-        onInsert={handleInsert}
-      />
-
-      {/* Custom CSS Ingestion Panel */}
-      <CustomCssPanel
-        isOpen={isCustomCssOpen}
-        onClose={() => setIsCustomCssOpen(false)}
-        css={customCss}
-        onCssChange={setCustomCss}
-      />
-
-      {/* Template Discovery Modal */}
+      />}
+      <TableEditorModal isOpen={isTableModalOpen} onClose={() => setIsTableModalOpen(false)} onInsert={handleInsert} />
+      <CustomCssPanel isOpen={isCustomCssOpen && hasDoc} onClose={() => setIsCustomCssOpen(false)} css={customCss} onCssChange={setCustomCss} />
       <TemplateModal
         isOpen={isTemplateModalOpen}
         onClose={() => setIsTemplateModalOpen(false)}
-        onSelect={(template) => {
-          createDocument(template.label || 'Untitled', template.content);
-        }}
+        onSelect={(t) => createDocument(t.label || 'Untitled', t.content)}
       />
+      <ConfirmModal {...confirmConfig} onClose={() => setConfirmConfig((c) => ({ ...c, isOpen: false }))} />
 
-      {/* Confirmation Modal */}
-      <ConfirmModal 
-        {...confirmConfig} 
-        onClose={() => setConfirmConfig(prev => ({ ...prev, isOpen: false }))} 
-      />
-
-      {/* Top Header */}
-      <div className={`transition-all duration-300 ease-in-out origin-top ${isFocusMode ? 'h-0 opacity-0 overflow-hidden' : 'h-16 opacity-100 shrink-0'}`}>
-        <header className="flex h-full items-center justify-between px-3 sm:px-4 bg-white dark:bg-dark-800 shadow-sm z-10 border-b border-gray-200 dark:border-gray-700 w-full gap-3">
-          <div className="flex items-center gap-2 sm:gap-3">
+      {/* Header */}
+      {!isFocusMode && (
+        <header className="flex h-12 shrink-0 items-center justify-between gap-2 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-800 px-2 sm:px-3">
+          <div className="flex min-w-0 items-center gap-1">
             <button
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 transition"
-              title="Toggle Document Sidebar"
+              onClick={() => setIsSidebarOpen((v) => !v)}
+              className={btn.icon}
+              aria-label={isSidebarOpen ? 'Hide documents' : 'Show documents'}
+              aria-pressed={isSidebarOpen}
+              title="Documents"
             >
-              <Menu size={20} />
+              <PanelLeft size={18} />
             </button>
-            <button
-              onClick={() => setShowLanding(true)}
-              className="flex items-center gap-2 hover:opacity-80 transition text-left"
-              title="Return to Product Overview"
-            >
-              <img 
-                src="/icon.svg" 
-                alt="Cak MaD Logo" 
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg shadow-sm" 
-              />
-              <span className="text-lg font-bold tracking-tight text-gray-800 dark:text-gray-100 hidden sm:block">
-                Cak MaD
-              </span>
+            <button onClick={() => setShowLanding(true)} className="flex items-center gap-2 rounded-md px-1.5 py-1 hover:bg-gray-100 dark:hover:bg-dark-700" title="About Cak MaD">
+              <img src="/icon.svg" alt="" className="h-6 w-6 rounded" />
+              <span className="hidden text-sm font-semibold tracking-tight sm:block">Cak MaD</span>
             </button>
           </div>
 
-          {/* Center Mobile Segmented Toggle (Visible only on mobile screens) */}
-          {isMobile && activeTabs.length > 0 && (
-            <div className="flex bg-gray-100 dark:bg-dark-700 p-0.5 rounded-lg text-xs font-semibold">
-              <button
-                onClick={() => setMobileViewMode('editor')}
-                className={`px-3 py-1.5 rounded-md transition ${mobileViewMode === 'editor' ? 'bg-white dark:bg-dark-800 text-brand-600 dark:text-brand-400 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
-              >
-                Editor
-              </button>
-              <button
-                onClick={() => setMobileViewMode('preview')}
-                className={`px-3 py-1.5 rounded-md transition ${mobileViewMode === 'preview' ? 'bg-white dark:bg-dark-800 text-brand-600 dark:text-brand-400 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
-              >
-                Preview
-              </button>
+          {isMobile && hasDoc && (
+            <div className="flex rounded-md bg-gray-100 dark:bg-dark-900 p-0.5 text-sm" role="tablist" aria-label="View">
+              {['editor', 'preview'].map((mode) => (
+                <button
+                  key={mode}
+                  role="tab"
+                  aria-selected={mobileViewMode === mode}
+                  onClick={() => setMobileViewMode(mode)}
+                  className={`min-h-[36px] rounded px-3 capitalize ${mobileViewMode === mode ? 'bg-white dark:bg-dark-700 font-medium shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
+                >
+                  {mode}
+                </button>
+              ))}
             </div>
           )}
 
-          {/* Right Header Utilities */}
-          <div className="flex items-center gap-1 sm:gap-2">
-            <button
-              onClick={() => setIsOnboardingOpen(true)}
-              className="p-2 rounded-lg text-gray-500 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400 hover:bg-gray-100 dark:hover:bg-dark-700 transition"
-              title="Tutorial & Workflow Guide"
-            >
-              <HelpCircle size={19} />
+          <div className="flex items-center gap-1">
+            <button onClick={() => setIsShortcutsOpen(true)} className={`${btn.icon} hidden sm:inline-flex`} aria-label="Keyboard shortcuts" title="Keyboard shortcuts (Ctrl+/)">
+              <Keyboard size={18} />
             </button>
-
-            <button
-              onClick={toggleDarkMode}
-              className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700 transition"
-              aria-label="Toggle Dark Mode"
-            >
-              {isDark ? <Sun size={19} /> : <Moon size={19} />}
+            <button onClick={() => setIsDark((d) => !d)} className={btn.icon} aria-label={isDark ? 'Use light theme' : 'Use dark theme'} title={isDark ? 'Light theme' : 'Dark theme'}>
+              {isDark ? <Sun size={18} /> : <Moon size={18} />}
             </button>
+            {hasDoc && (
+              <>
+                <button onClick={handleSaveMd} className={`${btn.ghost} hidden md:inline-flex`} title="Download as .md (Ctrl+S)">
+                  <FileDown size={16} /> .md
+                </button>
+                <button onClick={openExport} className={`${btn.primary} ml-1 px-3 py-1.5`} title="Export PDF (Ctrl+E)">
+                  <Download size={16} /> <span className="hidden sm:inline">Export PDF</span>
+                </button>
+              </>
+            )}
           </div>
         </header>
-      </div>
+      )}
 
-      {/* Main Workspace */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar */}
-        <Sidebar 
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar
           isVisible={isSidebarOpen && !isFocusMode}
           documents={documents}
           activeDocId={activeDocId}
-          onCreate={(title) => {
-            analytics.track('Document Created', { source: 'sidebar_create' });
-            createDocument(title, '');
-          }}
-          onOpen={openDocument}
+          onCreate={() => { newBlank('sidebar_create'); closeSidebarOnMobile(); }}
+          onOpen={(id) => { openDocument(id); closeSidebarOnMobile(); }}
           onRename={renameDocument}
           onDelete={handleDeleteDocument}
+          onDuplicate={(id) => { duplicateDocument(id); closeSidebarOnMobile(); toast.success('Duplicated'); }}
           onReorder={reorderDocuments}
           isMobile={isMobile}
           onClose={() => setIsSidebarOpen(false)}
         />
-
-        {/* Sidebar Backdrop Overlay on Mobile */}
         {isMobile && isSidebarOpen && !isFocusMode && (
-          <div 
-            className="fixed inset-0 bg-black/50 z-20 backdrop-blur-sm"
-            onClick={() => setIsSidebarOpen(false)}
-          />
+          <div className="fixed inset-0 z-20 bg-gray-950/40" onClick={() => setIsSidebarOpen(false)} aria-hidden="true" />
         )}
 
-        {/* Drop Zone Layer */}
-        <DropZone onDrop={handleDropFile}>
-          <div className="flex-1 flex flex-col h-full w-full overflow-hidden min-w-0">
-            {activeTabs.length > 0 && !isFocusMode && (
-              <TabBar 
+        <DropZone
+          onOpenFile={handleOpenFile}
+          onImage={handleImageUpload}
+          canInsertImage={hasDoc}
+          onReject={(file) => toast.error(`${file.name} isn't a Markdown or image file.`)}
+        >
+          <div className="flex h-full w-full min-w-0 flex-1 flex-col overflow-hidden">
+            {hasDoc && !isFocusMode && (
+              <TabBar
                 tabs={activeTabs}
                 activeTabId={activeDocId}
                 onTabClick={openDocument}
                 onTabClose={closeTab}
-                onNewTab={() => {
-                  analytics.track('Document Created', { source: 'tab_bar_new' });
-                  createDocument('Untitled', '');
-                }}
+                onNewTab={() => newBlank('tab_bar_new')}
                 onReorder={reorderTabs}
               />
             )}
 
-            {activeTabs.length > 0 ? (
+            {hasDoc ? (
               <>
-                {/* Editor Toolbar */}
-                <div className={`transition-all duration-300 ease-in-out ${isFocusMode ? 'h-0 opacity-0 overflow-hidden shrink-0' : 'h-auto opacity-100 shrink-0'}`}>
-                  <Toolbar 
-                    onInsert={handleInsert} 
-                    isFocusMode={isFocusMode} 
+                {!isFocusMode && (!isMobile || mobileViewMode === 'editor') && (
+                  <Toolbar
+                    onCommand={runCommand}
+                    onOpenTableModal={() => setIsTableModalOpen(true)}
+                    onImage={handleImageUpload}
+                    isFocusMode={isFocusMode}
                     toggleFocusMode={toggleFocusMode}
                     isPreviewVisible={isPreviewVisible}
-                    togglePreview={() => setIsPreviewVisible(!isPreviewVisible)}
-                    onOpenTableModal={() => setIsTableModalOpen(true)}
+                    togglePreview={() => setIsPreviewVisible((v) => !v)}
                     selectedFont={selectedFont}
                     onFontChange={setSelectedFont}
                     isLineWrapping={isLineWrapping}
-                    toggleLineWrapping={() => setIsLineWrapping(!isLineWrapping)}
+                    toggleLineWrapping={() => setIsLineWrapping((v) => !v)}
+                    isMobile={isMobile}
                   />
-                </div>
+                )}
 
-                {/* Split Resizable Workshop */}
-                <main className="flex-1 w-full overflow-hidden flex relative">
-                  <div className={`absolute top-2 left-1/2 -translate-x-1/2 bg-black/60 text-white text-xs px-3 py-1 rounded-full z-50 pointer-events-none transition-opacity duration-300 ${isFocusMode ? 'opacity-100' : 'opacity-0'}`}>
-                    Press ESC to exit focus mode
-                  </div>
+                <main className="relative flex w-full flex-1 overflow-hidden">
+                  {isFocusMode && (
+                    <button
+                      onClick={() => toggleFocusMode(false)}
+                      className="absolute right-3 top-3 z-30 inline-flex items-center gap-1.5 rounded-md bg-gray-900/70 px-2.5 py-1 text-xs text-white opacity-40 transition-opacity hover:opacity-100 focus:opacity-100"
+                    >
+                      <Minimize2 size={13} /> Exit focus <span className="text-gray-300">Esc</span>
+                    </button>
+                  )}
 
-                  {/* Desktop Resizable View */}
                   {!isMobile ? (
                     <PanelGroup direction="horizontal" autoSaveId="mde_v11_panels">
-                      <Panel id="editor-panel" minSize={20} collapsible={isPreviewVisible} order={1}>
-                        <div 
-                          className="h-full border-r border-gray-200 dark:border-gray-700 flex flex-col relative w-full overflow-hidden"
-                          onPaste={handlePaste}
-                          onDrop={handleDrop}
-                        >
-                          <Editor 
-                            value={activeContent} 
-                            onChange={(val) => updateContent(val)} 
-                            isDark={isDark} 
-                            ref={editorRef} 
-                            lineWrapping={isLineWrapping}
-                          />
-                        </div>
+                      <Panel id="editor-panel" minSize={20} order={1}>
+                        {editorPane}
                       </Panel>
-
                       {isPreviewVisible && (
                         <>
-                          <PanelResizeHandle className="w-1.5 cursor-col-resize bg-gray-200 dark:bg-gray-700 hover:bg-brand-400 dark:hover:bg-brand-500 active:bg-brand-600 transition-colors z-20 flex items-center justify-center">
-                            <div className="h-6 flex-col space-y-0.5 flex justify-center">
-                              <div className="w-0.5 h-1 bg-gray-400 dark:bg-gray-500 rounded-full"></div>
-                              <div className="w-0.5 h-1 bg-gray-400 dark:bg-gray-500 rounded-full"></div>
-                              <div className="w-0.5 h-1 bg-gray-400 dark:bg-gray-500 rounded-full"></div>
-                            </div>
+                          <PanelResizeHandle className="group relative w-px bg-gray-200 dark:bg-gray-700 data-[resize-handle-state=hover]:bg-brand-400 data-[resize-handle-state=drag]:bg-brand-500">
+                            <span className="absolute inset-y-0 -left-1.5 -right-1.5" />
                           </PanelResizeHandle>
-
                           <Panel id="preview-panel" minSize={20} order={2}>
-                            <div 
-                              ref={previewScrollContainerRef}
-                              className="h-full bg-white dark:bg-dark-900 relative w-full overflow-y-auto flex flex-col px-4 sm:px-10 py-6 sm:py-8 scroll-smooth"
-                            >
-                              <div className="w-full max-w-4xl mx-auto pb-16">
-                                <Preview 
-                                  content={activeContent} 
-                                  ref={previewRef} 
-                                  selectedFont={selectedFont}
-                                  customCss={customCss}
-                                />
-                              </div>
-                            </div>
+                            {previewPane}
                           </Panel>
                         </>
                       )}
                     </PanelGroup>
-                  ) : (
-                    /* Mobile Screen View: Single Panel Switching for Touch ergonomics */
-                    <div className="h-full w-full overflow-hidden flex flex-col">
-                      {mobileViewMode === 'editor' ? (
-                        <div 
-                          className="h-full w-full overflow-hidden flex flex-col relative"
-                          onPaste={handlePaste}
-                          onDrop={handleDrop}
-                        >
-                          <Editor 
-                            value={activeContent} 
-                            onChange={(val) => updateContent(val)} 
-                            isDark={isDark} 
-                            ref={editorRef} 
-                            lineWrapping={isLineWrapping}
-                          />
-                        </div>
-                      ) : (
-                        <div 
-                          ref={previewScrollContainerRef}
-                          className="h-full w-full bg-white dark:bg-dark-900 overflow-y-auto px-4 py-6 scroll-smooth"
-                        >
-                          <div className="w-full mx-auto pb-16">
-                            <Preview 
-                              content={activeContent} 
-                              ref={previewRef} 
-                              selectedFont={selectedFont}
-                              customCss={customCss}
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  ) : mobileViewMode === 'editor' ? editorPane : previewPane}
                 </main>
 
-                {/* Footer Status Bar */}
-                <div className={`transition-all duration-300 ease-in-out origin-bottom ${isFocusMode ? 'h-0 opacity-0 overflow-hidden shrink-0' : 'h-10 opacity-100 shrink-0'}`}>
-                  <Footer 
-                    words={words} 
-                    chars={chars} 
-                    charsNoSpace={charsNoSpace} 
-                    syncEnabled={syncEnabled} 
-                    toggleSync={toggleSync}
-                    onExportModal={() => setIsExportModalOpen(true)}
-                    onSaveMd={handleSaveMd}
-                    onOpenMd={handleDropFile}
-                    onOpenTemplateModal={() => setIsTemplateModalOpen(true)}
-                    onToggleCustomCss={() => setIsCustomCssOpen(!isCustomCssOpen)}
-                  />
-                </div>
+                {!isFocusMode && (
+                  <div className="h-9 shrink-0">
+                    <Footer
+                      words={countWords(activeContent)}
+                      chars={countChars(activeContent)}
+                      storageError={storageError}
+                      syncEnabled={syncEnabled}
+                      toggleSync={toggleSync}
+                      showSync={!isMobile && isPreviewVisible}
+                      onOpenTemplateModal={() => setIsTemplateModalOpen(true)}
+                      onToggleCustomCss={() => setIsCustomCssOpen((v) => !v)}
+                      isCustomCssOpen={isCustomCssOpen}
+                      hasCustomCss={!!customCss.trim()}
+                    />
+                  </div>
+                )}
               </>
             ) : (
-              /* Guided Empty State when no document tab is currently opened */
               <EmptyStateGuidance
+                documents={documents}
+                onOpenDoc={openDocument}
                 onCreateDoc={(title, content) => createDocument(title, content)}
-                onImportFile={handleDropFile}
+                onImportFile={handleOpenFile}
+                onBrowseTemplates={() => setIsTemplateModalOpen(true)}
               />
             )}
           </div>

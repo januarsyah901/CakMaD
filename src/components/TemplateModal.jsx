@@ -1,198 +1,108 @@
-import React, { useState, useEffect } from 'react';
-import { X, Sparkles, BookOpen, FileCode, PenTool, ArrowRight, Eye, Clock, Check } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import Modal from './ui/Modal';
+import Preview from './Preview';
+import { btn } from './ui/styles';
 import { templates, TEMPLATE_CATEGORIES } from '../data/templates';
 import { analytics } from '../utils/analytics';
 
 const RECENT_TEMPLATES_KEY = 'cakmad_recent_templates';
 
+const readRecents = () => {
+  try {
+    return JSON.parse(localStorage.getItem(RECENT_TEMPLATES_KEY)) || [];
+  } catch {
+    return [];
+  }
+};
+
 export default function TemplateModal({ isOpen, onClose, onSelect }) {
   const [activeCategory, setActiveCategory] = useState('all');
-  const [selectedTemplate, setSelectedTemplate] = useState(templates[0]);
-  const [recentTemplateIds, setRecentTemplateIds] = useState(() => {
-    try {
-      const saved = localStorage.getItem(RECENT_TEMPLATES_KEY);
-      return saved ? JSON.parse(saved) : ['ai-report', 'readme'];
-    } catch {
-      return ['ai-report', 'readme'];
-    }
-  });
+  const [selectedId, setSelectedId] = useState(templates[0].id);
+  const [recentIds, setRecentIds] = useState(readRecents);
 
   useEffect(() => {
-    if (isOpen) {
-      analytics.track('Template Modal Opened');
-    }
+    if (isOpen) analytics.track('Template Modal Opened');
   }, [isOpen]);
 
-  if (!isOpen) return null;
-
   const handleSelect = (template) => {
-    // Save to recents
-    const nextRecents = [template.id, ...recentTemplateIds.filter(id => id !== template.id)].slice(0, 3);
-    setRecentTemplateIds(nextRecents);
-    localStorage.setItem(RECENT_TEMPLATES_KEY, JSON.stringify(nextRecents));
-
+    const next = [template.id, ...recentIds.filter((id) => id !== template.id)].slice(0, 3);
+    setRecentIds(next);
+    localStorage.setItem(RECENT_TEMPLATES_KEY, JSON.stringify(next));
     analytics.track('Template Selected', { templateId: template.id, category: template.category });
     onSelect(template);
     onClose();
   };
 
-  const filteredTemplates = activeCategory === 'all'
-    ? templates
-    : templates.filter(t => t.category === activeCategory);
-
-  const recentTemplates = recentTemplateIds
-    .map(id => templates.find(t => t.id === id))
-    .filter(Boolean);
-
-  const getCategoryIcon = (cat) => {
-    switch (cat) {
-      case 'professional': return <Sparkles size={16} className="text-brand-500" />;
-      case 'academic': return <BookOpen size={16} className="text-amber-500" />;
-      case 'documentation': return <FileCode size={16} className="text-orange-500" />;
-      default: return <PenTool size={16} className="text-emerald-500" />;
-    }
-  };
+  const recentSet = new Set(recentIds);
+  const visible = (activeCategory === 'all' ? templates : templates.filter((t) => t.category === activeCategory))
+    // Recently used first, otherwise keep the authored order.
+    .slice().sort((a, b) => (recentSet.has(b.id) ? 1 : 0) - (recentSet.has(a.id) ? 1 : 0));
+  const selected = templates.find((t) => t.id === selectedId) || templates[0];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
-      <div 
-        className="bg-white dark:bg-dark-800 rounded-2xl shadow-2xl w-full max-w-4xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col max-h-[90vh]"
-        onClick={e => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-dark-900">
-          <div>
-            <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-              <Sparkles size={20} className="text-brand-500" />
-              Template Library
-            </h3>
-            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-              Select a starter structure optimized for presentation and export
-            </p>
-          </div>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="xl"
+      title="New from template"
+      description="Each template opens as a new document. Text in [brackets] is meant to be replaced."
+      bodyClassName="p-0 flex flex-col"
+      footer={
+        <>
+          <button onClick={onClose} className={btn.ghost}>Cancel</button>
+          <button onClick={() => handleSelect(selected)} className={btn.primary}>Use “{selected.label}”</button>
+        </>
+      }
+    >
+      <div className="flex gap-1 overflow-x-auto no-scrollbar border-b border-gray-200 dark:border-gray-700 px-5 py-2">
+        {TEMPLATE_CATEGORIES.map((cat) => (
           <button
-            onClick={onClose}
-            className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-lg transition"
-            aria-label="Close"
+            key={cat.id}
+            onClick={() => setActiveCategory(cat.id)}
+            aria-pressed={activeCategory === cat.id}
+            className={`shrink-0 rounded-md px-3 py-1.5 text-sm transition-colors ${
+              activeCategory === cat.id
+                ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900'
+                : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-dark-700'
+            }`}
           >
-            <X size={20} />
+            {cat.label}
           </button>
-        </div>
+        ))}
+      </div>
 
-        {/* Recently Used Bar */}
-        {recentTemplates.length > 0 && (
-          <div className="px-6 py-2.5 bg-brand-50/50 dark:bg-brand-950/20 border-b border-brand-200 dark:border-brand-900/40 flex items-center gap-2 overflow-x-auto text-xs">
-            <span className="flex items-center gap-1 font-semibold text-brand-700 dark:text-brand-300 shrink-0">
-              <Clock size={13} /> Recently Used:
-            </span>
-            <div className="flex items-center gap-2">
-              {recentTemplates.map(t => (
+      <div className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+        <ul className="max-h-[35vh] md:max-h-none md:h-[60vh] overflow-y-auto border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-700 p-2" role="listbox" aria-label="Templates">
+          {visible.map((t) => {
+            const isSelected = t.id === selected.id;
+            return (
+              <li key={t.id}>
                 <button
-                  key={t.id}
-                  onClick={() => handleSelect(t)}
-                  className="px-2.5 py-1 bg-white dark:bg-dark-800 hover:bg-brand-50 dark:hover:bg-brand-900/50 border border-brand-200 dark:border-brand-800 rounded-md text-gray-700 dark:text-gray-300 transition flex items-center gap-1.5"
-                >
-                  {getCategoryIcon(t.category)}
-                  <span>{t.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Category Filter Tabs */}
-        <div className="px-6 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center gap-1.5 overflow-x-auto bg-white dark:bg-dark-800">
-          {TEMPLATE_CATEGORIES.map(cat => (
-            <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition shrink-0 ${
-                activeCategory === cat.id
-                  ? 'bg-brand-500 text-white shadow-sm'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-dark-700'
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Content Area: Split View on Large Screens */}
-        <div className="flex-1 overflow-hidden grid grid-cols-1 md:grid-cols-12 divide-y md:divide-y-0 md:divide-x divide-gray-200 dark:divide-gray-700">
-          {/* Template Cards List (7 cols) */}
-          <div className="md:col-span-7 overflow-y-auto p-4 sm:p-6 space-y-3">
-            {filteredTemplates.map(t => {
-              const isSelected = selectedTemplate?.id === t.id;
-              return (
-                <div
-                  key={t.id}
-                  onClick={() => setSelectedTemplate(t)}
-                  className={`p-4 rounded-xl border text-left cursor-pointer transition flex items-start justify-between gap-3 ${
-                    isSelected
-                      ? 'border-brand-500 bg-brand-50/60 dark:bg-brand-950/30 dark:border-brand-500 shadow-sm'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-dark-800'
+                  role="option"
+                  aria-selected={isSelected}
+                  onClick={() => setSelectedId(t.id)}
+                  onDoubleClick={() => handleSelect(t)}
+                  className={`w-full rounded-md px-3 py-2.5 text-left transition-colors ${
+                    isSelected ? 'bg-brand-50 dark:bg-brand-950/40' : 'hover:bg-gray-50 dark:hover:bg-dark-700'
                   }`}
                 >
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      {getCategoryIcon(t.category)}
-                      <h4 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100">
-                        {t.label}
-                      </h4>
-                      {t.badge && (
-                        <span className="px-1.5 py-0.5 text-[10px] font-medium bg-gray-100 dark:bg-dark-700 text-gray-600 dark:text-gray-300 rounded">
-                          {t.badge}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                      {t.description}
-                    </p>
-                  </div>
+                  <span className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-gray-100">
+                    {t.label}
+                    {recentSet.has(t.id) && <span className="text-[11px] font-normal text-gray-500">recent</span>}
+                  </span>
+                  <span className="mt-0.5 block text-xs text-gray-500 dark:text-gray-400">{t.description}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSelect(t);
-                    }}
-                    className="shrink-0 p-2 text-brand-600 dark:text-brand-400 hover:bg-brand-100 dark:hover:bg-brand-900/50 rounded-lg transition"
-                    title="Use this template"
-                  >
-                    <ArrowRight size={18} />
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Template Preview Drawer (5 cols) */}
-          <div className="md:col-span-5 bg-gray-50 dark:bg-dark-900 p-4 sm:p-5 flex flex-col justify-between overflow-hidden">
-            <div className="overflow-hidden flex flex-col h-full">
-              <div className="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-gray-700 mb-3">
-                <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-                  <Eye size={14} /> Preview
-                </span>
-                <span className="text-xs font-medium text-brand-600 dark:text-brand-400">
-                  {selectedTemplate?.label}
-                </span>
-              </div>
-
-              <div className="flex-1 overflow-y-auto bg-white dark:bg-dark-800 rounded-lg p-3.5 border border-gray-200 dark:border-gray-700 font-mono text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap select-text">
-                {selectedTemplate?.content || '(Empty document)'}
-              </div>
-            </div>
-
-            <div className="pt-4 flex items-center gap-3">
-              <button
-                onClick={() => handleSelect(selectedTemplate)}
-                className="w-full py-2.5 px-4 bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white font-medium text-sm rounded-lg shadow-sm transition flex items-center justify-center gap-2"
-              >
-                <Check size={16} /> Use Selected Template
-              </button>
-            </div>
+        <div className="h-[40vh] md:h-[60vh] overflow-y-auto bg-gray-100 dark:bg-dark-900 p-4">
+          <div className="mx-auto max-w-xl origin-top rounded-sm bg-white dark:bg-dark-800 px-8 py-7 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700 [&_.markdown-preview]:text-[13px] [&_.markdown-preview]:leading-6">
+            <Preview content={selected.content} selectedFont="sans-serif" />
           </div>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }

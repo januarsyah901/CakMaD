@@ -1,30 +1,48 @@
 import { v4 as uuidv4 } from 'uuid';
 
-export const DEFAULT_CONTENT = `# 🚀 Welcome to Your Markdown Editor!
+export const DEFAULT_CONTENT = `# Welcome to Cak MaD
 
-## Text Formatting
-You can easily write with **bold text**, *italic emphasis*, ~~strikethrough~~, and \`inline code\`.
+Write on the left, read on the right. Everything is saved in this browser as you type.
+Replace this text with your own, or paste Markdown from ChatGPT, Claude or Gemini.
 
+## Formatting
 
-## Code Scripts
+**Bold**, *italic*, ~~strikethrough~~, \`inline code\` and [links](https://example.com).
+Select text and press **Ctrl+B**, **Ctrl+I** or **Ctrl+K** to wrap it.
 
-\`\`\`javascript
-// Syntax highlighting for your code
-function createMagic(title) {
-  return \`✨ \${title} is awesome!\`;
-}
+- [x] Task lists
+- [ ] Tables, math and diagrams below
+
+## Tables
+
+| Feature | Syntax |
+| :--- | :--- |
+| Table | pipes and dashes |
+| Math | \`$...$\` or \`$$...$$\` |
+| Diagram | a \`mermaid\` code block |
+
+## Math
+
+Inline $E = mc^2$, or a block:
+
+$$
+\\int_0^1 x^2 \\, dx = \\frac{1}{3}
+$$
+
+## Diagram
+
+\`\`\`mermaid
+graph LR
+    Paste --> Edit --> Preview --> PDF
 \`\`\`
 
-## Mathematical Equations
+## Code
 
-Write inline math like $E = mc^2$, or use block equations for complex formulas:
+\`\`\`js
+const greet = (name) => \`Hello, \${name}\`;
+\`\`\`
 
-$$
-\\begin{align}
-\\text{Area of Circle} &= \\pi r^2 \\\\
-\\text{Volume of Sphere} &= \\frac{4}{3}\\pi r^3
-\\end{align}
-$$
+Press **Ctrl+E** to export a PDF, **Ctrl+S** to download the .md file, and **Ctrl+/** for every shortcut.
 `;
 
 export const createNewDocument = (title = "Untitled", content = DEFAULT_CONTENT, settings = {}) => {

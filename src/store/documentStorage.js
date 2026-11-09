@@ -56,8 +56,28 @@ export class LocalDocumentStorage {
     return true;
   }
 
-  async saveAll(documents) {
-    localStorage.setItem(STORAGE_DOCS_KEY, JSON.stringify(documents));
+  // Last save error (e.g. QuotaExceededError), readable with useSyncExternalStore.
+  error = null;
+  listeners = new Set();
+  subscribe = (fn) => {
+    this.listeners.add(fn);
+    return () => this.listeners.delete(fn);
+  };
+  getError = () => this.error;
+  setError(error) {
+    if (error === this.error) return;
+    this.error = error;
+    this.listeners.forEach((fn) => fn());
+  }
+
+  saveAll(documents) {
+    try {
+      localStorage.setItem(STORAGE_DOCS_KEY, JSON.stringify(documents));
+      this.setError(null);
+    } catch (e) {
+      console.error('[DocumentStorage] Failed to save documents:', e);
+      this.setError(e);
+    }
     return documents;
   }
 }

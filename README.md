@@ -36,11 +36,16 @@ Speed up your workflow with these intuitive shortcuts:
 
 | Shortcut | Action |
 | :--- | :--- |
-| `Ctrl + S` | Save current document as `.md` |
-| `Ctrl + E` | Open PDF Export modal |
-| `Ctrl + Alt + N` | Open Templates modal |
-| `Ctrl + Shift + F` | Toggle Focus Mode |
-| `ESC` | Exit Focus Mode / Close Modals |
+| `Ctrl + S` | Download current document as `.md` |
+| `Ctrl + E` | Export PDF |
+| `Ctrl + O` | Open a `.md` file |
+| `Ctrl + Alt + N` | New from template |
+| `Ctrl + B` / `Ctrl + I` / `Ctrl + K` | Bold / italic / link (wraps the selection) |
+| `Ctrl + Shift + X` | Strikethrough |
+| `Ctrl + Shift + P` | Show / hide preview |
+| `Ctrl + Shift + F` | Focus mode |
+| `Ctrl + /` | Show all shortcuts |
+| `Esc` | Exit focus mode / close dialogs |
 
 ## 🛠️ Tech Stack
 

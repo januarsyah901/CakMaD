@@ -1,119 +1,88 @@
-import React from 'react';
-import { Sparkles, FileCode, PenTool, Upload, Plus } from 'lucide-react';
+import { useRef } from 'react';
+import { FilePlus, Upload } from 'lucide-react';
 import { templates } from '../data/templates';
 import { analytics } from '../utils/analytics';
+import { timeAgo } from '../utils/timeAgo';
+import { btn } from './ui/styles';
 
-export default function EmptyStateGuidance({ onCreateDoc, onImportFile }) {
-  const handleSelectTemplate = (templateId) => {
-    const found = templates.find(t => t.id === templateId) || templates[0];
-    analytics.track('Document Created', { source: 'empty_state_card', templateId: found.id });
-    onCreateDoc(found.label, found.content);
-  };
+export default function EmptyStateGuidance({ documents, onOpenDoc, onCreateDoc, onImportFile, onBrowseTemplates }) {
+  const fileInput = useRef(null);
+  const recent = [...documents].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)).slice(0, 5);
 
-  const handleCreateBlank = () => {
-    analytics.track('Document Created', { source: 'empty_state_blank' });
-    onCreateDoc('Untitled', '');
+  const createFrom = (t) => {
+    analytics.track('Document Created', { source: 'empty_state_template', templateId: t.id });
+    onCreateDoc(t.label, t.content);
   };
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-2xl mx-auto w-full">
-      {/* Title & Guidance */}
-      <img 
-        src="/icon.svg" 
-        alt="Cak MaD Logo" 
-        className="w-14 h-14 rounded-2xl shadow-sm mb-4" 
-      />
+    <div className="flex flex-1 overflow-y-auto">
+      <div className="mx-auto w-full max-w-2xl px-6 py-12 sm:py-16">
+        <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">No document open</h1>
+        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Start a blank page, open a .md file, or pick up where you left off.</p>
 
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
-        What do you want to create today?
-      </h2>
-      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1.5 mb-8 max-w-md">
-        Select a starter workflow to transform your ideas or AI output into a clean, structured document.
-      </p>
-
-      {/* 4 Action Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 w-full text-left">
-        {/* Create AI Report */}
-        <button
-          onClick={() => handleSelectTemplate('ai-report')}
-          className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-800 hover:border-brand-500 dark:hover:border-brand-400 hover:shadow-md transition group"
-        >
-          <div className="w-9 h-9 rounded-lg bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-            <Sparkles size={18} />
-          </div>
-          <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
-            Create AI Report
-          </h4>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Starter layout with executive summaries, metrics, and charts.
-          </p>
-        </button>
-
-        {/* Create Documentation */}
-        <button
-          onClick={() => handleSelectTemplate('readme')}
-          className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-800 hover:border-brand-500 dark:hover:border-brand-400 hover:shadow-md transition group"
-        >
-          <div className="w-9 h-9 rounded-lg bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-            <FileCode size={18} />
-          </div>
-          <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-            Create Documentation
-          </h4>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Technical specs, README files, and API documentation.
-          </p>
-        </button>
-
-        {/* Create Notes */}
-        <button
-          onClick={() => handleSelectTemplate('meeting')}
-          className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-800 hover:border-brand-500 dark:hover:border-brand-400 hover:shadow-md transition group"
-        >
-          <div className="w-9 h-9 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-            <PenTool size={18} />
-          </div>
-          <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-            Create Notes
-          </h4>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Daily logs, meeting summaries, and action checklists.
-          </p>
-        </button>
-
-        {/* Import Markdown */}
-        <label className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-800 hover:border-brand-500 dark:hover:border-brand-400 hover:shadow-md transition group cursor-pointer block">
+        <div className="mt-6 flex flex-wrap gap-2">
+          <button
+            onClick={() => { analytics.track('Document Created', { source: 'empty_state_blank' }); onCreateDoc('Untitled', ''); }}
+            className={btn.primary}
+          >
+            <FilePlus size={16} /> Blank document
+          </button>
+          <button onClick={() => fileInput.current?.click()} className={btn.secondary}>
+            <Upload size={16} /> Open .md file
+          </button>
           <input
+            ref={fileInput}
             type="file"
-            accept=".md,.markdown,.txt"
+            accept=".md,.markdown,.txt,text/markdown,text/plain"
             className="hidden"
             onChange={(e) => {
-              if (e.target.files && e.target.files[0]) {
+              const file = e.target.files?.[0];
+              if (file) {
                 analytics.track('Document Imported');
-                onImportFile(e.target.files[0]);
+                onImportFile(file);
               }
+              e.target.value = '';
             }}
           />
-          <div className="w-9 h-9 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-            <Upload size={18} />
-          </div>
-          <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-            Import Markdown
-          </h4>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Load an existing .md file directly from your computer.
-          </p>
-        </label>
-      </div>
+        </div>
 
-      {/* Or Blank Canvas */}
-      <div className="mt-6 flex items-center gap-2">
-        <button
-          onClick={handleCreateBlank}
-          className="text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1 transition"
-        >
-          <Plus size={14} /> Start with a blank document
-        </button>
+        {recent.length > 0 && (
+          <section className="mt-10">
+            <h2 className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">Recent</h2>
+            <ul className="divide-y divide-gray-200 dark:divide-gray-700 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-800">
+              {recent.map((doc) => (
+                <li key={doc.id}>
+                  <button onClick={() => onOpenDoc(doc.id)} className="flex w-full items-baseline justify-between gap-4 px-4 py-2.5 text-left hover:bg-gray-50 dark:hover:bg-dark-700">
+                    <span className="truncate text-sm text-gray-900 dark:text-gray-100">{doc.title}</span>
+                    <span className="shrink-0 text-xs text-gray-500">{timeAgo(doc.updatedAt)}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <section className="mt-10">
+          <div className="mb-2 flex items-baseline justify-between">
+            <h2 className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">Templates</h2>
+            <button onClick={onBrowseTemplates} className="text-xs font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
+              Preview all
+            </button>
+          </div>
+          <ul className="grid gap-2 sm:grid-cols-2">
+            {templates.slice(0, 6).map((t) => (
+              <li key={t.id}>
+                <button
+                  onClick={() => createFrom(t)}
+                  className="h-full w-full rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-800 px-4 py-3 text-left hover:border-gray-400 dark:hover:border-gray-500 transition-colors"
+                >
+                  <span className="block text-sm font-medium text-gray-900 dark:text-gray-100">{t.label}</span>
+                  <span className="mt-0.5 block text-xs text-gray-500 dark:text-gray-400">{t.description}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
       </div>
     </div>
   );

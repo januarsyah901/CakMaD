@@ -27,13 +27,13 @@
 }
 .pdf-export-root a,
 .dark .pdf-export-root a {
-  color: #ea8c00 !important;
+  color: #c67200 !important;
 }
 .pdf-export-root blockquote,
 .dark .pdf-export-root blockquote {
-  background-color: rgba(255, 251, 235, 0.5) !important;
-  border-left-color: #ff9d00 !important;
-  color: #374151 !important;
+  background-color: transparent !important;
+  border-left-color: #d1d5db !important;
+  color: #4b5563 !important;
 }
 .pdf-export-root :not(pre) > code,
 .dark .pdf-export-root :not(pre) > code {
@@ -43,7 +43,7 @@
   overflow-wrap: anywhere;
   vertical-align: baseline;
   background: #f3f4f6 !important;
-  color: #d97706 !important;
+  color: #1f2937 !important;
 }
 .pdf-export-root pre,
 .dark .pdf-export-root pre {

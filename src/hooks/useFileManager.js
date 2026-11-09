@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useSyncExternalStore } from 'react';
 import { createNewDocument, DEFAULT_CONTENT } from '../store/documentStore';
 import { documentStorage } from '../store/documentStorage';
 import { useRecentFiles } from './useRecentFiles';
@@ -37,6 +37,8 @@ export function useFileManager() {
     return { activeDocId: documents[0]?.id || null, activeTabIds: documents[0] ? [documents[0].id] : [] };
   });
 
+  // Base64 images can push localStorage past its ~5 MB quota; surface that instead of failing silently.
+  const storageError = useSyncExternalStore(documentStorage.subscribe, documentStorage.getError);
   useEffect(() => {
     documentStorage.saveAll(documents);
   }, [documents]);
@@ -106,6 +108,20 @@ export function useFileManager() {
     if (doc) addRecentFile({ ...doc, title: newTitle });
   }, [documents, addRecentFile]);
 
+  const duplicateDocument = useCallback((id) => {
+    const source = documents.find(d => d.id === id);
+    if (!source) return null;
+    const copy = { ...createNewDocument(`${source.title} copy`, source.content), customCss: source.customCss };
+    setDocuments(prev => {
+      const index = prev.findIndex(d => d.id === id);
+      const next = [...prev];
+      next.splice(index + 1, 0, copy);
+      return next;
+    });
+    setTabs(prev => ({ activeTabIds: [...prev.activeTabIds, copy.id], activeDocId: copy.id }));
+    return copy;
+  }, [documents]);
+
   const reorderTabs = useCallback((startIndex, endIndex) => {
     setTabs(prev => {
       const result = Array.from(prev.activeTabIds);
@@ -137,6 +153,8 @@ export function useFileManager() {
     deleteDocument,
     renameDocument,
     reorderTabs,
-    reorderDocuments
+    reorderDocuments,
+    duplicateDocument,
+    storageError
   };
 }

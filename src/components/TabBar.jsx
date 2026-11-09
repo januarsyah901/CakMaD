@@ -1,97 +1,77 @@
-import React, { useState } from 'react';
-import { Plus, X, GripVertical } from 'lucide-react';
+import { useState } from 'react';
+import { Plus, X } from 'lucide-react';
 
 export default function TabBar({ tabs, activeTabId, onTabClick, onTabClose, onNewTab, onReorder }) {
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [dragOverIndex, setDragOverIndex] = useState(null);
 
-  const handleDragStart = (e, index) => {
-    setDraggedIndex(index);
-    e.dataTransfer.effectAllowed = 'move';
-    // Create a ghost image if needed, but default is fine
-    // e.dataTransfer.setDragImage(e.target, 0, 0);
-  };
-
-  const handleDragOver = (e, index) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (draggedIndex === index) return;
-    setDragOverIndex(index);
-  };
-
-  const handleDrop = (e, index) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (draggedIndex !== null && draggedIndex !== index) {
-      onReorder(draggedIndex, index);
-    }
-    setDraggedIndex(null);
-    setDragOverIndex(null);
-  };
-
-  const handleDragEnd = () => {
+  const resetDrag = () => {
     setDraggedIndex(null);
     setDragOverIndex(null);
   };
 
   return (
-    <div className="flex items-end h-10 border-b border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-[#1e1e1e] overflow-x-auto w-full no-scrollbar relative shrink-0">
-      <div className="flex h-[36px] min-w-max mt-auto items-end space-x-0.5 px-0.5 relative z-10 w-full">
-        {tabs.map((tab, index) => {
-          const isActive = tab.id === activeTabId;
-          const isDragging = draggedIndex === index;
-          const isDragOver = dragOverIndex === index;
-
-          return (
-            <div
-              key={tab.id}
-              draggable
-              onDragStart={(e) => handleDragStart(e, index)}
-              onDragOver={(e) => handleDragOver(e, index)}
-              onDrop={(e) => handleDrop(e, index)}
-              onDragEnd={handleDragEnd}
-              onClick={() => onTabClick(tab.id)}
-              className={`
-                group flex items-center h-full px-3 py-1 text-sm border-t-2 border-l border-r rounded-t-lg
-                cursor-pointer transition-all duration-150 relative min-w-32 max-w-48
-                ${isActive 
-                  ? 'bg-white dark:bg-dark-900 border-t-brand-500 border-l-brand-400/60 border-r-brand-400/60 dark:border-l-brand-600/50 dark:border-r-brand-600/50 text-brand-700 dark:text-brand-300 font-semibold z-10 shadow-sm -mb-[1px] ring-1 ring-brand-500/20 dark:ring-brand-400/20' 
-                  : 'bg-transparent border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-200/70 dark:hover:bg-[#2d2d2d] hover:text-gray-900 dark:hover:text-gray-200'}
-                ${isDragging ? 'opacity-40 grayscale scale-95' : 'opacity-100'}
-                ${isDragOver ? 'border-r-2 border-r-brand-500 z-20' : ''}
-              `}
+    <div className="flex h-9 w-full shrink-0 items-stretch overflow-x-auto no-scrollbar border-b border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-dark-900" role="tablist" aria-label="Open documents">
+      {tabs.map((tab, index) => {
+        const isActive = tab.id === activeTabId;
+        return (
+          <div
+            key={tab.id}
+            role="tab"
+            tabIndex={isActive ? 0 : -1}
+            aria-selected={isActive}
+            draggable
+            onDragStart={(e) => { setDraggedIndex(index); e.dataTransfer.effectAllowed = 'move'; }}
+            onDragOver={(e) => {
+              if (draggedIndex === null) return;
+              e.preventDefault();
+              e.stopPropagation();
+              if (draggedIndex !== index) setDragOverIndex(index);
+            }}
+            onDrop={(e) => {
+              if (draggedIndex === null) return;
+              e.preventDefault();
+              e.stopPropagation();
+              if (draggedIndex !== index) onReorder(draggedIndex, index);
+              resetDrag();
+            }}
+            onDragEnd={resetDrag}
+            onClick={() => onTabClick(tab.id)}
+            // Middle click closes, like a browser tab.
+            onAuxClick={(e) => { if (e.button === 1) { e.preventDefault(); onTabClose(tab.id); } }}
+            onKeyDown={(e) => {
+              if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                const next = tabs[(index + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+                onTabClick(next.id);
+              }
+            }}
+            title={tab.title}
+            className={`group relative flex min-w-[7rem] max-w-[12rem] cursor-pointer select-none items-center gap-1 border-r border-gray-200 dark:border-gray-700 pl-3 pr-1 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-500 ${
+              isActive
+                ? 'bg-white dark:bg-dark-800 text-gray-900 dark:text-gray-100 after:absolute after:inset-x-0 after:-bottom-px after:h-px after:bg-white dark:after:bg-dark-800 before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-brand-500'
+                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-dark-800/60 hover:text-gray-900 dark:hover:text-gray-200'
+            } ${draggedIndex === index ? 'opacity-40' : ''} ${dragOverIndex === index ? 'shadow-[inset_-2px_0_0_theme(colors.brand.500)]' : ''}`}
+          >
+            <span className="flex-1 truncate">{tab.title}</span>
+            <button
+              onClick={(e) => { e.stopPropagation(); onTabClose(tab.id); }}
+              className={`shrink-0 rounded p-0.5 text-gray-500 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-dark-700 dark:hover:text-gray-100 ${isActive ? '' : 'opacity-0 group-hover:opacity-100 focus:opacity-100'}`}
+              aria-label={`Close ${tab.title}`}
+              title="Close (middle-click)"
             >
-              <div 
-                className={`w-2 h-2 rounded-full mr-2 shrink-0 ${isActive ? 'bg-brand-500' : 'bg-transparent'}`} 
-              />
-              <span className="truncate flex-1 select-none" title={tab.title}>
-                {tab.title}
-              </span>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onTabClose(tab.id);
-                }}
-                className={`
-                  ml-2 p-1 rounded-md shrink-0 transition-colors
-                  ${isActive ? 'opacity-100 text-gray-500 hover:bg-gray-100 dark:hover:bg-dark-800' : 'opacity-0 group-hover:opacity-100 text-gray-400 hover:bg-gray-300 dark:hover:bg-[#404040]'}
-                `}
-                title="Close Tab"
-              >
-                <X size={14} />
-              </button>
-            </div>
-          );
-        })}
-        
-        <button
-          onClick={onNewTab}
-          className="ml-2 mb-[3px] p-1.5 rounded-full text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-[#2d2d2d] transition"
-          title="New Document"
-        >
-          <Plus size={16} />
-        </button>
-      </div>
+              <X size={14} />
+            </button>
+          </div>
+        );
+      })}
+      <button
+        onClick={onNewTab}
+        className="flex shrink-0 items-center px-2.5 text-gray-500 hover:bg-gray-50 hover:text-gray-900 dark:hover:bg-dark-800 dark:hover:text-gray-100"
+        title="New document"
+        aria-label="New document"
+      >
+        <Plus size={16} />
+      </button>
     </div>
   );
 }
